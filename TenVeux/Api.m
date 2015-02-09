@@ -20,13 +20,16 @@ static NSString *userName;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kApiRootUrl, path] ] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:20];
     
     [request setHTTPMethod:method];
+    NSMutableURLRequest *mutableRequest = [request mutableCopy];
+    [mutableRequest addValue:@"application/json" forHTTPHeaderField:@"Content-type"];
     
     if (authenticated) {
-        NSMutableURLRequest *mutableRequest = [request mutableCopy];
-        [mutableRequest addValue:@"application/json" forHTTPHeaderField:@"Content-type"];
+        
         [mutableRequest addValue:userToken forHTTPHeaderField:@"X-Authorization-Token"];
-        request = [mutableRequest copy];
+        
     }
+    
+    request = [mutableRequest copy];
     
     //    NSLog(@"Auth token: %@", userToken);
     

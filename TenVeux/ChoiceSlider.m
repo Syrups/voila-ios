@@ -38,8 +38,12 @@
 }
 
 - (void)show {
+    lastValue = 7;
     [UIView animateWithDuration:0.2f animations:^{
         self.overlay.alpha = 0.6f;
+    }];
+    [bullets enumerateObjectsUsingBlock:^(UIView* b, NSUInteger idx, BOOL *stop) {
+        b.alpha = 0.5f;
     }];
 }
 
@@ -83,11 +87,11 @@
     
     if (n > 9) {
         [UIView animateWithDuration:0.3f animations:^{
-            self.positiveUi.alpha = 0.7f;
+            self.positiveUi.alpha = 1;
         }];
     } else if (n < 7) {
         [UIView animateWithDuration:0.3f animations:^{
-            self.negativeUi.alpha = 0.7f;
+            self.negativeUi.alpha = 1;
         }];
     } else {
         [UIView animateWithDuration:0.3f animations:^{
@@ -99,6 +103,7 @@
 
 - (void)didRelease {
     
+    
     if (lastValue > 9) {
         [UIView animateWithDuration:0.2f animations:^{
             CGRect f = self.handler.frame;
@@ -108,8 +113,11 @@
         } completion:^(BOOL finished) {
             [UIView animateWithDuration:0.2f animations:^{
                 self.alpha = 0;
+                self.nextButton.alpha = 1;
+                self.resendButton.alpha = 1;
                 self.viewController.topView.backgroundColor = [UIColor clearColor];
                 [self.viewController.view bringSubviewToFront:self.viewController.topView];
+                [self.viewController didAnswerYesToCurrentProposition];
             }];
         }];
     }
@@ -123,8 +131,12 @@
         } completion:^(BOOL finished) {
             [UIView animateWithDuration:0.2f animations:^{
                 self.alpha = 0;
+//                self.nextButton.alpha = 1;
+//                self.resendButton.alpha = 1;
+                self.resendButton.userInteractionEnabled = NO;
                 self.viewController.topView.backgroundColor = [UIColor clearColor];
                 [self.viewController.view bringSubviewToFront:self.viewController.topView];
+                [self.viewController didAnswerNoToCurrentProposition];
             }];
         }];
     }
@@ -132,7 +144,7 @@
     else {
         [UIView animateWithDuration:0.3f animations:^{
             CGRect f = self.handler.frame;
-            f.origin.x = 80;
+            f.origin.x = self.frame.size.width/2-40;
             self.handler.frame = f;
         }];
         [self hide];

@@ -15,7 +15,7 @@
 @interface User : JSONModel
 
 @property (strong, nonatomic) NSString* id;
-@property (strong, nonatomic) NSString* name;
+@property (strong, nonatomic) NSString* username;
 @property (strong, nonatomic) NSString<Optional>* token;
 @property (assign, nonatomic) NSInteger sent;
 @property (assign, nonatomic) NSInteger taken;

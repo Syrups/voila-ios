@@ -11,6 +11,11 @@
 
 @interface UserManager : NSObject
 
+- (void)createUserWithUsername:(NSString*)username password:(NSString*)password email:(NSString*)email success:(void(^)())success failure:(void(^)())failure;
 - (void)getFriendsOfUser:(User*)user withSuccess:(void(^)(NSArray* friends))success failure:(void(^)())failure;
+- (void)findUsersMatchingQuery:(NSString*)query withSuccess:(void(^)(NSArray* results))success failure:(void(^)())failure;
+- (void)getFriendRequestsForUser:(User*)user withSuccess:(void(^)(NSArray* requests))success failure:(void(^)())failure;
+- (void)addFriendForUser:(User*)user withId:(NSString*)friendId withSuccess:(void(^)())success failure:(void(^)())failure;
+- (void)dismissFriendRequestForUser:(User*)user withId:(NSString*)friendId withSuccess:(void(^)())success failure:(void(^)())failure;
 
 @end

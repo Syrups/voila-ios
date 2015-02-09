@@ -19,12 +19,15 @@
 
 - (IBAction)presentFriendPicker:(id)sender {
     FriendPickerViewController* picker = (FriendPickerViewController*)[self.storyboard instantiateViewControllerWithIdentifier:@"FriendPicker"];
+    picker.isOriginal = YES;
+    picker.originalProposition = nil;
     [self addChildViewController:picker];
     [self.view addSubview:picker.view];
     [picker didMoveToParentViewController:self];
     
     picker.view.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
     picker.image = self.image;
+    picker.isOriginal = YES;
     
     [UIView animateWithDuration:0.3f delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         picker.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
@@ -32,7 +35,7 @@
 }
 
 - (IBAction)cancel:(id)sender {
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.navigationController popToRootViewControllerAnimated:NO];
 }
 
 @end

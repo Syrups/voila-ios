@@ -9,7 +9,7 @@
 #import "CameraPreviewBehavior.h"
 
 @implementation CameraPreviewBehavior {
-    BOOL frontCamera;
+    BOOL isFrontCamera;
 }
 
 
@@ -21,8 +21,16 @@
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    
+    [self setup];
+    
+    return self;
+}
+
 - (void)setup {
-    frontCamera = NO;
+    isFrontCamera = NO;
     
     AVCaptureDevice *inputDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceInput *captureInput = [AVCaptureDeviceInput deviceInputWithDevice:inputDevice error:nil];
@@ -72,7 +80,7 @@
     [self.captureSession addOutput:self.stillImageOutput];
     
     [self.view addSubview:capturePreviewView];
-    [self.view sendSubviewToBack:capturePreviewView];
+    [self.view bringSubviewToFront:capturePreviewView];
     
     [self.captureButton addTarget:self action:@selector(captureNow) forControlEvents:UIControlEventTouchUpInside];
     [self.switchCameraButton addTarget:self action:@selector(switchCameraDevice:) forControlEvents:UIControlEventTouchUpInside];
@@ -98,8 +106,8 @@
     NSLog(@"about to request a capture from: %@", self.stillImageOutput);
     [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
         
-        NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-        UIImage *image = [[UIImage alloc] initWithData:imageData];
+//        NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
+//        UIImage *image = [[UIImage alloc] initWithData:imageData];
         
         
     }];
@@ -107,7 +115,7 @@
 
 - (IBAction)switchCameraDevice:(id)sender {
     AVCaptureDevice *device;
-    device = frontCamera ? self.backCamera : self.frontCamera;
+    device = isFrontCamera ? self.backCamera : self.frontCamera;
     NSLog(@"Switching camera.");
     AVCaptureDeviceInput *input = [[AVCaptureDeviceInput alloc] initWithDevice:device error:nil];
     

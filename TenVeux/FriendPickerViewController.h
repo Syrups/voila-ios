@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Proposition.h"
 
 @interface FriendPickerViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
@@ -15,5 +16,7 @@
 @property (strong, nonatomic) NSArray* friends;
 @property (strong, nonatomic) NSMutableArray* selectedFriends;
 @property (strong, nonatomic) IBOutlet UIButton* sendButton;
+@property (assign, nonatomic) BOOL isOriginal;
+@property (strong, nonatomic) Proposition* originalProposition;
 
 @end

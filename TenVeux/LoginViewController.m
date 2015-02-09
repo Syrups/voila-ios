@@ -8,6 +8,7 @@
 
 #import "LoginViewController.h"
 #import "UserSession.h"
+#import "Configuration.h"
 
 @interface LoginViewController ()
 
@@ -18,7 +19,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [self setNeedsStatusBarAppearanceUpdate];
+    
+    self.registerButton.layer.borderColor = RgbColorAlpha(124, 125, 129, 1).CGColor;
+    [self.passwordField setLeftImage:[UIImage imageNamed:@"field-password.png"]];
+    
     [[UserSession sharedSession] load];
+//    [[UserSession sharedSession] destroy];
     
     NSLog(@"%@", [UserSession sharedSession].token);
     
@@ -30,18 +37,32 @@
 - (IBAction)requestLogin:(id)sender {
     self.activityIndicator.hidden = NO;
     
-    [[UserSession sharedSession] authenticateWithUsername:self.usernameField.text password:self.passwordField.text success:^(UserSession* session){
+    NSString* username = [self.usernameField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSString* password = [self.passwordField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    [[UserSession sharedSession] authenticateWithUsername:username password:password success:^(UserSession* session){
         [session store]; // cache session information
         
         [self pushCaptureViewController];
     } failure:^{
-        // ERROR
+        ErrorAlert(@"Nom d'utilisateur ou mot de passe invalide");
     }];
 }
 
 - (void) pushCaptureViewController {
     UIViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"Capture"];
     [self.navigationController setViewControllers:@[vc]];
+}
+
+#pragma mark - UITextField
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
 }
 
 @end

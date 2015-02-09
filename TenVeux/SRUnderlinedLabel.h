@@ -10,6 +10,6 @@
 
 @interface SRUnderlinedLabel : UITextField
 
-@property (strong, nonatomic) NSString* leftImage;
+@property (strong, nonatomic) UIImage* leftImage;
 
 @end

@@ -17,11 +17,11 @@
 @property (strong, nonatomic) NSString* id;
 @property (strong, nonatomic) NSString* image;
 @property (assign, nonatomic) BOOL isPrivate;
-@property (strong, nonatomic) User* sender;
-@property (strong, nonatomic) NSArray<User>* receivers;
-@property (strong, nonatomic) NSArray<User>* resenders;
-@property (strong, nonatomic) NSArray<User>* takers;
-@property (strong, nonatomic) NSArray<User>* dismissers;
+@property (strong, nonatomic) User<ConvertOnDemand>* sender;
+@property (strong, nonatomic) NSArray<User, ConvertOnDemand>* receivers;
+@property (strong, nonatomic) NSArray<User, ConvertOnDemand>* resenders;
+@property (strong, nonatomic) NSArray<User, ConvertOnDemand>* takers;
+@property (strong, nonatomic) NSArray<User, ConvertOnDemand>* dismissers;
 @property (strong, nonatomic) NSString* sentAt;
 @property (strong, nonatomic) Proposition<Optional>* originalProposition;
 

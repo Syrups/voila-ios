@@ -20,13 +20,14 @@
 @property (strong, nonatomic) IBOutlet UIView* overlay;
 @property (strong, nonatomic) IBOutlet UIView* positiveUi;
 @property (strong, nonatomic) IBOutlet UIView* negativeUi;
+@property (strong, nonatomic) IBOutlet UIView* resendButton;
+@property (strong, nonatomic) IBOutlet UIView* nextButton;
 
-@property (weak, nonatomic) IBOutlet PendingPropositionViewController* viewController;
+@property (strong, nonatomic) IBOutlet PendingPropositionViewController* viewController;
 
 - (void)show;
 - (void)hide;
 - (void)updateSliderWithLocation:(CGFloat)location;
-- (void)hideBullets;
 - (void)didRelease;
 
 @end

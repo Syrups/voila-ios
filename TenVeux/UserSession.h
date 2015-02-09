@@ -13,6 +13,7 @@
 
 @property (strong, nonatomic) NSString* id;
 @property (strong, nonatomic) NSString* token;
+@property (assign, nonatomic) BOOL hasPendingFriendRequests;
 
 + (UserSession*)sharedSession;
 

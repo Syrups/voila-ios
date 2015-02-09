@@ -48,7 +48,10 @@ static UserSession* sharedSession;
 
 - (void)authenticateWithUsername:(NSString *)username password:(NSString *)password success:(void (^)(UserSession* session))success failure:(void (^)())failure {
     
-    AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:[Api getBaseRequestFor:[NSString stringWithFormat:@"/users/authenticate?username=%@&password=%@", username, password] authenticated:NO method:@"GET"]];
+    NSMutableURLRequest* request = [Api getBaseRequestFor:@"/users/authenticate" authenticated:NO method:@"POST"].mutableCopy;
+    [request setHTTPBody:[[NSString stringWithFormat:@"{ \"username\": \"%@\", \"password\": \"%@\" }", username, password] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     
     op.responseSerializer = [AFJSONResponseSerializer serializer];
     

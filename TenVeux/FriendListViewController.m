@@ -16,8 +16,8 @@
 
 @implementation FriendListViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
 
     self.automaticallyAdjustsScrollViewInsets = NO;
     
@@ -30,6 +30,26 @@
     } failure:^{
         NSLog(@"ERROR: Unable to fetch friend");
     }];
+    
+    if ([[UserSession sharedSession] hasPendingFriendRequests]) {
+        self.requestsLed.hidden = NO;
+    } else {
+        self.requestsLed.hidden = YES;
+    }
+}
+
+- (void)viewDidLayoutSubviews {
+    if ([self.friendsTableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [self.friendsTableView setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([self.friendsTableView respondsToSelector:@selector(setLayoutMargins:)]) {
+        [self.friendsTableView setLayoutMargins:UIEdgeInsetsZero];
+    }
+}
+
+- (IBAction)closeMenu:(id)sender {
+    [self.menu close:sender];
 }
 
 #pragma mark - UITableView
@@ -50,8 +70,7 @@
     profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
     
     UILabel* name = (UILabel*)[cell.contentView viewWithTag:20];
-    name.text = friend.name;
-    
+    name.text = friend.username;
     
     return cell;
 
@@ -66,6 +85,17 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         //add code here for when you hit delete
+    }
+}
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
+        [cell setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
     }
 }
 

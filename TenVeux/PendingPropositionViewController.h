@@ -12,6 +12,14 @@
 @interface PendingPropositionViewController : UIViewController
 
 @property (strong, nonatomic) Proposition* proposition;
+
 @property (strong, nonatomic) IBOutlet UIView* topView;
+@property (strong, nonatomic) IBOutlet UILabel* senderNameLabel;
+@property (strong, nonatomic) IBOutlet UIImageView* image;
+@property (strong, nonatomic) IBOutlet UIButton* okButton;
+
+- (void)didAnswerYesToCurrentProposition;
+- (void)didAnswerNoToCurrentProposition;
+- (IBAction)requestNext:(id)sender; 
 
 @end

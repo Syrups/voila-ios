@@ -13,5 +13,11 @@
 @property (strong, nonatomic) NSArray* propositionStack;
 @property (strong, nonatomic) NSArray* answersStack;
 @property (strong, nonatomic) UIViewController* childViewController;
+@property (strong, nonatomic) IBOutlet UILabel* notifCountLabel;
+@property (strong, nonatomic) IBOutlet UIButton* backButton;
+
+- (IBAction)requestNextInStack:(id)sender;
+- (void)hideTopControls;
+- (void)showTopControls;
 
 @end

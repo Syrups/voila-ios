@@ -7,10 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MenuViewController.h"
 
 @interface FriendListViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
+@property (strong, nonatomic) MenuViewController* menu;
 @property (strong, nonatomic) NSArray* friends;
+@property (strong, nonatomic) NSArray* filteredFriends;
 @property (strong, nonatomic) IBOutlet UITableView* friendsTableView;
+@property (strong, nonatomic) IBOutlet UIView* requestsLed;
 
 @end

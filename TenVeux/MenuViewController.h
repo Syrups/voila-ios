@@ -13,6 +13,7 @@
 
 @property (strong, nonatomic) CaptureViewController* masterViewController;
 
+- (IBAction)close:(id)sender;
 - (void)didCloseMenu;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "FriendPickerViewController.h"
+#import "PendingPropositionViewController.h"
 #import "UserManager.h"
 #import "UserSession.h"
 #import "FriendSwitch.h"
@@ -39,7 +40,8 @@
     CALayer *bottomBorder = [CALayer layer];
     bottomBorder.frame = CGRectMake(0, self.friendsTableView.frame.size.height-1, self.view.frame.size.width, 1.0f);
     bottomBorder.backgroundColor = [UIColor grayColor].CGColor;
-    [self.friendsTableView.layer addSublayer:bottomBorder];
+//    [self.friendsTableView.layer addSublayer:bottomBorder];
+    
 
 }
 
@@ -64,12 +66,19 @@
 - (IBAction)send:(id)sender {
     PropositionManager* manager = [[PropositionManager alloc] init];
     UIView* sending = [[[NSBundle mainBundle] loadNibNamed:@"Sending" owner:self options:nil] objectAtIndex:0];
+    sending.frame = self.view.frame;
     [self.view addSubview:sending];
     
     [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
     
-    [manager sendPropositionWithImage:self.image users:self.selectedFriends success:^{
-        [self.navigationController popToRootViewControllerAnimated:NO];
+    [manager sendPropositionWithImage:self.image users:self.selectedFriends originalProposition:self.originalProposition  success:^{
+        if (self.isOriginal) {
+            [self.navigationController popToRootViewControllerAnimated:NO];
+        } else {
+            [sending removeFromSuperview];
+            [self dismiss:sender];
+            [(PendingPropositionViewController*)self.parentViewController requestNext:sender];
+        }
     } failure:^{
         // ERROR
     }];
@@ -93,13 +102,19 @@
     profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
     
     UILabel* name = (UILabel*)[cell.contentView viewWithTag:20];
-    name.text = friend.name;
+    name.text = friend.username;
     
     FriendSwitch* btn = (FriendSwitch*)[cell.contentView viewWithTag:30];
     btn.friendId = friend.id;
     [btn addTarget:self action:@selector(toggleFriendSelection:) forControlEvents:UIControlEventTouchUpInside];
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell* cell = [self.friendsTableView cellForRowAtIndexPath:indexPath];
+    FriendSwitch* btn = (FriendSwitch*)[cell.contentView viewWithTag:30];
+    [btn sendActionsForControlEvents:UIControlEventTouchUpInside];
 }
 
 #pragma mark - Navigation

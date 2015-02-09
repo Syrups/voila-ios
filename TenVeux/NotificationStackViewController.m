@@ -7,13 +7,38 @@
 //
 
 #import "NotificationStackViewController.h"
+#import "PendingPropositionViewController.h"
 
-@implementation NotificationStackViewController
+@implementation NotificationStackViewController {
+    NSUInteger currentIndex;
+}
 
 - (void)viewDidLoad {
-    NSLog(@"%@", self.answersStack);
+
+    self.notifCountLabel.text = [NSString stringWithFormat:@"%lu", self.propositionStack.count + self.answersStack.count];
+    currentIndex = 0;
     
-    UIViewController* child = [self.storyboard instantiateViewControllerWithIdentifier:@"PendingProposition"];
+    [self next];
+}
+
+- (void)next {
+    
+    NSLog(@"Next");
+    
+    self.notifCountLabel.text = [NSString stringWithFormat:@"%lu", self.propositionStack.count + self.answersStack.count - currentIndex];
+    
+    if (currentIndex == self.propositionStack.count + self.answersStack.count) {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        return;
+    }
+    
+    if (self.childViewController != nil) {
+        [self.childViewController.view removeFromSuperview];
+        [self.childViewController removeFromParentViewController];
+    }
+    
+    PendingPropositionViewController* child = (PendingPropositionViewController*)[self.storyboard instantiateViewControllerWithIdentifier:@"PendingProposition"];
+    child.proposition = [self.propositionStack objectAtIndex:currentIndex];
     [self addChildViewController:child];
     [self.view addSubview:child.view];
     [self.view sendSubviewToBack:child.view];
@@ -21,12 +46,23 @@
     self.childViewController = child;
 }
 
-- (void)next {
-    
+- (IBAction)requestNextInStack:(id)sender {
+    currentIndex++;
+    [self next];
 }
 
 - (IBAction)dismiss {
     [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
+- (void)hideTopControls {
+    self.notifCountLabel.hidden = YES;
+    self.backButton.hidden = YES;
+}
+
+- (void)showTopControls {
+    self.notifCountLabel.hidden = NO;
+    self.backButton.hidden = NO;
 }
 
 @end

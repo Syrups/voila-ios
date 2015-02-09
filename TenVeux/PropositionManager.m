@@ -49,13 +49,36 @@
     [op start];
 }
 
-- (void)sendPropositionWithImage:(UIImage *)image users:(NSArray *)userIds success:(void (^)())success failure:(void (^)())failure {
+- (void)getReceivedPropositionsOfUser:(User *)user success:(void (^)(NSArray *))success failure:(void (^)())failure {
+    AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:[Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@/received", user.id] authenticated:YES method:@"GET"]];
+    
+    op.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        NSError* err = nil;
+        NSArray* received = [Proposition arrayOfModelsFromDictionaries:responseObject error:&err];
+        
+        if (err) {
+            NSLog(@"%@", err);
+        }
+        
+        success(received);
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@", error);
+    }];
+    
+    [op start];
+}
+
+- (void)sendPropositionWithImage:(UIImage *)image users:(NSArray *)userIds originalProposition:(Proposition*)original success:(void (^)())success failure:(void (^)())failure {
     
     ImageUploader* uploader = [[ImageUploader alloc] init];
     
     [uploader uploadImage:image withSuccess:^(NSString *filename) {
         NSMutableURLRequest* request = [Api getBaseRequestFor:@"/propositions" authenticated:YES method:@"POST"].mutableCopy;
-        [request setHTTPBody:[self httpBodyForFilename:filename users:userIds]];
+        [request setHTTPBody:[self httpBodyForFilename:filename users:userIds original:original.id]];
         AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         
         
@@ -76,7 +99,7 @@
     }];
 }
 
--(NSData*)httpBodyForFilename:(NSString*)filename users:(NSArray *)userIds {
+-(NSData*)httpBodyForFilename:(NSString*)filename users:(NSArray *)userIds original:(NSString*)original {
     NSMutableString *usersJson = [NSMutableString stringWithString:@"["];
     int i = 0;
     
@@ -90,7 +113,13 @@
     
     [usersJson appendString:@"]"];
     
-    NSString* body = [NSString stringWithFormat:@"{ \"image\": \"%@\", \"receivers\": %@ }", filename, usersJson];
+    NSString* body;
+    
+    if (original == nil) {
+        body = [NSString stringWithFormat:@"{ \"image\": \"%@\", \"receivers\": %@ }", filename, usersJson];
+    } else {
+        body = [NSString stringWithFormat:@"{ \"image\": \"%@\", \"receivers\": %@, \"originalProposition\": \"%@\" }", filename, usersJson, original];
+    }
     
     return [body dataUsingEncoding:NSUTF8StringEncoding];
 }
