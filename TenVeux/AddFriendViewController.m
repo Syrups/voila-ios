@@ -8,6 +8,7 @@
 
 #import "AddFriendViewController.h"
 #import "User.h"
+#import "UserSession.h"
 
 @interface AddFriendViewController ()
 
@@ -45,7 +46,18 @@
 }
 
 - (IBAction)requestFriendAdd:(id)sender {
+    CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:self.resultsTableView];
+    NSIndexPath *indexPath = [self.resultsTableView indexPathForRowAtPoint:buttonPosition];
     
+    UserManager* manager = [[UserManager alloc] init];
+    User* user = [[UserSession sharedSession] user];
+    User* userToAdd = [self.results objectAtIndex:indexPath.row];
+    
+    [manager addFriendForUser:user withId:userToAdd.id withSuccess:^{
+        [self dismissViewControllerAnimated:YES completion:nil];
+    } failure:^{
+        // ERROR
+    }];
 }
 
 - (IBAction)close:(id)sender {

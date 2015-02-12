@@ -20,6 +20,7 @@
 @property(strong, nonatomic) AVCaptureDevice *frontCamera;
 @property(nonatomic, retain) AVCaptureStillImageOutput *stillImageOutput;
 
+@property (strong, nonatomic) IBOutlet UIButton* notificationsButton;
 @property (strong, nonatomic) IBOutlet UIButton* captureButton;
 @property (strong, nonatomic) IBOutlet UIButton* switchCameraButton;
 

@@ -54,6 +54,8 @@
 		B36720E41A79293A00E1F91D /* Answer.m in Sources */ = {isa = PBXBuildFile; fileRef = B36720E31A79293A00E1F91D /* Answer.m */; };
 		B36FCC9B1A7D1E8A0092D643 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36FCC9A1A7D1E8A0092D643 /* MenuViewController.m */; };
 		B3822E651A836E1B0066FDE4 /* SRUnderlinedLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B3822E641A836E1B0066FDE4 /* SRUnderlinedLabel.m */; };
+		B38FC9081A8BBAA80004EDD3 /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B38FC9071A8BBAA80004EDD3 /* ProfileViewController.m */; };
+		B38FC90B1A8BC2960004EDD3 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B38FC90A1A8BC2960004EDD3 /* SettingsViewController.m */; };
 		B396950A1A7A84280080D8DF /* CapturedImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B39695091A7A84280080D8DF /* CapturedImageViewController.m */; };
 		B396950E1A7A90F60080D8DF /* FriendSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = B396950D1A7A90F60080D8DF /* FriendSwitch.m */; };
 		B39695121A7AA18C0080D8DF /* NotificationStackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B39695111A7AA18C0080D8DF /* NotificationStackViewController.m */; };
@@ -186,6 +188,10 @@
 		B36FCC9A1A7D1E8A0092D643 /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuViewController.m; sourceTree = "<group>"; };
 		B3822E631A836E1B0066FDE4 /* SRUnderlinedLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRUnderlinedLabel.h; sourceTree = "<group>"; };
 		B3822E641A836E1B0066FDE4 /* SRUnderlinedLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRUnderlinedLabel.m; sourceTree = "<group>"; };
+		B38FC9061A8BBAA80004EDD3 /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
+		B38FC9071A8BBAA80004EDD3 /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
+		B38FC9091A8BC2960004EDD3 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		B38FC90A1A8BC2960004EDD3 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		B39695081A7A84280080D8DF /* CapturedImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CapturedImageViewController.h; sourceTree = "<group>"; };
 		B39695091A7A84280080D8DF /* CapturedImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CapturedImageViewController.m; sourceTree = "<group>"; };
 		B396950C1A7A90F60080D8DF /* FriendSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendSwitch.h; sourceTree = "<group>"; };
@@ -503,6 +509,10 @@
 				B3F70AE41A83CB9400491A59 /* AddFriendViewController.m */,
 				B3011E361A8531E000B72F73 /* ReceptionViewController.h */,
 				B3011E371A8531E000B72F73 /* ReceptionViewController.m */,
+				B38FC9061A8BBAA80004EDD3 /* ProfileViewController.h */,
+				B38FC9071A8BBAA80004EDD3 /* ProfileViewController.m */,
+				B38FC9091A8BC2960004EDD3 /* SettingsViewController.h */,
+				B38FC90A1A8BC2960004EDD3 /* SettingsViewController.m */,
 			);
 			name = Menu;
 			sourceTree = "<group>";
@@ -641,7 +651,7 @@
 				TargetAttributes = {
 					B33EBB911A77FFE800DDFC43 = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = 3RQFQA54Q5;
+						DevelopmentTeam = BS32A789K9;
 					};
 					B33EBBAA1A77FFE800DDFC43 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -708,6 +718,7 @@
 				B3FA29AF1A880A2A007AB5F9 /* SignUpViewController.m in Sources */,
 				B3D4014F1A8438FE004451B4 /* UIImage+MultiFormat.m in Sources */,
 				B320E0D11A79ABE700C576B9 /* ImageUploader.m in Sources */,
+				B38FC9081A8BBAA80004EDD3 /* ProfileViewController.m in Sources */,
 				B3D401501A8438FE004451B4 /* UIImage+WebP.m in Sources */,
 				B3D401481A8438FE004451B4 /* SDWebImageDecoder.m in Sources */,
 				B3D401471A8438FE004451B4 /* SDWebImageCompat.m in Sources */,
@@ -761,6 +772,7 @@
 				B3146BAB1A785BC20058A0B4 /* SRBehavior.m in Sources */,
 				B3146B9E1A78043F0058A0B4 /* JSONModel+networking.m in Sources */,
 				B3D4014E1A8438FE004451B4 /* UIImage+GIF.m in Sources */,
+				B38FC90B1A8BC2960004EDD3 /* SettingsViewController.m in Sources */,
 				B3146BA71A785B8C0058A0B4 /* CaptureViewController.m in Sources */,
 				B3146B5F1A78041A0058A0B4 /* UserSession.m in Sources */,
 			);

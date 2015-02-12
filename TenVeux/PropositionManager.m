@@ -78,7 +78,18 @@
     
     [uploader uploadImage:image withSuccess:^(NSString *filename) {
         NSMutableURLRequest* request = [Api getBaseRequestFor:@"/propositions" authenticated:YES method:@"POST"].mutableCopy;
-        [request setHTTPBody:[self httpBodyForFilename:filename users:userIds original:original.id]];
+        
+        NSString* originalId;
+        
+        // Well, "original proposition" can have an original proposition too
+        // Let's keep track of the real original proposition
+        if (original.originalProposition != nil) {
+            originalId = original.originalProposition.id;
+        } else {
+            originalId = original.id;
+        }
+        
+        [request setHTTPBody:[self httpBodyForFilename:filename users:userIds original:originalId]];
         AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         
         
@@ -97,6 +108,40 @@
     } failure:^(NSError *error) {
         failure();
     }];
+}
+
+- (void)takeProposition:(Proposition *)proposition withSuccess:(void (^)())success failure:(void (^)())failure {
+    AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:[Api getBaseRequestFor:[NSString stringWithFormat:@"/propositions/%@/take", proposition.id] authenticated:YES method:@"PUT"]];
+    
+    op.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+
+        success();
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@", error);
+        failure();
+    }];
+    
+    [op start];
+}
+
+- (void)dismissProposition:(Proposition *)proposition withSuccess:(void (^)())success failure:(void (^)())failure {
+    AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:[Api getBaseRequestFor:[NSString stringWithFormat:@"/propositions/%@/dismiss", proposition.id] authenticated:YES method:@"PUT"]];
+    
+    op.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        success();
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@", error);
+        failure();
+    }];
+    
+    [op start];
 }
 
 -(NSData*)httpBodyForFilename:(NSString*)filename users:(NSArray *)userIds original:(NSString*)original {

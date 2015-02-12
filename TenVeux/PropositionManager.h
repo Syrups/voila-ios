@@ -19,4 +19,7 @@
 
 - (void) sendPropositionWithImage:(UIImage*)image users:(NSArray*)userIds originalProposition:(Proposition*)original success:(void(^)())success failure:(void(^)())failure;
 
+- (void)takeProposition:(Proposition*)proposition withSuccess:(void(^)())success failure:(void(^)())failure;
+- (void)dismissProposition:(Proposition*)proposition withSuccess:(void(^)())success failure:(void(^)())failure;
+
 @end

@@ -10,6 +10,8 @@
 #import "PropositionManager.h"
 #import "UserSession.h"
 #import "Proposition.h"
+#import "UIImageView+WebCache.h"
+#import "Configuration.h"
 
 @interface ReceptionViewController ()
 
@@ -45,6 +47,9 @@
     if (cell == nil) {
         cell = [[UICollectionViewCell alloc] init];
     }
+    
+    UIImageView* image = (UIImageView*)[cell.contentView viewWithTag:10];
+    [image sd_setImageWithURL:[NSURL URLWithString:[kMediaUrl stringByAppendingString:proposition.image]]];
     
     return cell;
 }

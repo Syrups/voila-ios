@@ -27,10 +27,8 @@
     [[UserSession sharedSession] load];
 //    [[UserSession sharedSession] destroy];
     
-    NSLog(@"%@", [UserSession sharedSession].token);
-    
     if ([[UserSession sharedSession] isAuthenticated]) {
-        [self pushCaptureViewController];
+        [self pushCaptureViewControllerAnimated:NO];
     }
 }
 
@@ -43,15 +41,15 @@
     [[UserSession sharedSession] authenticateWithUsername:username password:password success:^(UserSession* session){
         [session store]; // cache session information
         
-        [self pushCaptureViewController];
+        [self pushCaptureViewControllerAnimated:NO];
     } failure:^{
         ErrorAlert(@"Nom d'utilisateur ou mot de passe invalide");
     }];
 }
 
-- (void) pushCaptureViewController {
+- (void) pushCaptureViewControllerAnimated:(BOOL)animated {
     UIViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"Capture"];
-    [self.navigationController setViewControllers:@[vc]];
+    [self.navigationController setViewControllers:@[vc] animated:animated];
 }
 
 #pragma mark - UITextField

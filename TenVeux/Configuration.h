@@ -9,12 +9,12 @@
 #ifndef TenVeux2_Configuration_h
 #define TenVeux2_Configuration_h
 
-//#define kApiRootUrl     @"http://tenveux.herokuapp.com/api"
-//#define kMediaUploadUrl @"http://tenveux.herokuapp.com/images"
-//#define kMediaUrl       @"http://tenveux.herokuapp.com/media/"
-#define kApiRootUrl     @"http://localhost:5000/api"
-#define kMediaUploadUrl @"http://localhost:5000/images"
-#define kMediaUrl       @"http://localhost:5000/media/"
+#define kApiRootUrl     @"http://tenveux.herokuapp.com/api"
+#define kMediaUploadUrl @"http://tenveux.herokuapp.com/images"
+#define kMediaUrl       @"http://tenveux.herokuapp.com/media/"
+//#define kApiRootUrl     @"http://localhost:5000/api"
+//#define kMediaUploadUrl @"http://localhost:5000/images"
+//#define kMediaUrl       @"http://localhost:5000/media/"
 
 #define kSessionStoreId @"user.id"
 #define kSessionStoreToken @"user.token"

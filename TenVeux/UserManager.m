@@ -127,6 +127,29 @@
     [op start];
 }
 
+- (void)getUser:(User *)user withSuccess:(void (^)(User *))success failure:(void (^)())failure {
+    AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:[Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@", user.id] authenticated:YES method:@"GET"]];
+    
+    op.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        NSError* err = nil;
+        User* user = [[User alloc] initWithDictionary:responseObject error:&err];
+        
+        if (err) {
+            NSLog(@"%@", err);
+        }
+        
+        success(user);
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"%@", error);
+    }];
+    
+    [op start];
+}
+
 - (NSData*)httpBodyForUsername:(NSString*)username password:(NSString*)password email:(NSString*)email {
     NSString* json = [NSString stringWithFormat:@"{ \"username\": \"%@\", \"password\": \"%@\", \"email\": \"%@\" }", username, password, email];
     

@@ -12,6 +12,7 @@
 #import "Configuration.h"
 #import "ChoiceSlider.h"
 #import "UIImageView+WebCache.h"
+#import "PropositionManager.h"
 
 @implementation PendingPropositionViewController
 
@@ -27,11 +28,21 @@
 }
 
 - (void)didAnswerYesToCurrentProposition {
-
+    PropositionManager* manager = [[PropositionManager alloc] init];
+    [manager takeProposition:self.proposition withSuccess:^{
+        // todo ?
+    } failure:^{
+        // ERROR
+    }];
 }
 
 - (void)didAnswerNoToCurrentProposition {
-    [NSTimer scheduledTimerWithTimeInterval:0.5f target:self selector:@selector(requestNext:) userInfo:nil repeats:NO];
+    PropositionManager* manager = [[PropositionManager alloc] init];
+    [manager dismissProposition:self.proposition withSuccess:^{
+        [NSTimer scheduledTimerWithTimeInterval:0.5f target:self selector:@selector(requestNext:) userInfo:nil repeats:NO];
+    } failure:^{
+        // ERROR
+    }];
 }
 
 - (IBAction)presentFriendPicker:(id)sender {

@@ -51,6 +51,8 @@
         [[SDWebImagePrefetcher sharedImagePrefetcher] prefetchURLs:urls progress:nil completed:^(NSUInteger noOfFinishedUrls, NSUInteger noOfSkippedUrls) {
             if (propositions.count > 0 || answers.count > 0) {
                 self.notificationsLed.hidden = NO;
+            } else {
+                self.notificationsButton.enabled = NO;
             }
         }];
         
@@ -60,16 +62,17 @@
         
     }];
     
-//    UserManager* userManager = [[UserManager alloc] init];
-//    
-//    [userManager getFriendRequestsForUser:[[UserSession sharedSession] user] withSuccess:^(NSArray *requests) {
-//        if (requests.count > 0) {
-//            self.friendRequestsLed.hidden = NO;
-//            [[UserSession sharedSession] setHasPendingFriendRequests:YES];
-//        }
-//    } failure:^{
-//        // error
-//    }];
+    UserManager* userManager = [[UserManager alloc] init];
+    
+    [userManager getFriendRequestsForUser:[[UserSession sharedSession] user] withSuccess:^(NSArray *requests) {
+        if (requests.count > 0) {
+            self.friendRequestsLed.hidden = NO;
+            [[UserSession sharedSession] setHasPendingFriendRequests:YES];
+        }
+    } failure:^{
+        // error
+    }];
+    
 }
 
 - (void) presentCapturedImage:(UIImage*)image {

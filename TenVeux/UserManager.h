@@ -17,5 +17,6 @@
 - (void)getFriendRequestsForUser:(User*)user withSuccess:(void(^)(NSArray* requests))success failure:(void(^)())failure;
 - (void)addFriendForUser:(User*)user withId:(NSString*)friendId withSuccess:(void(^)())success failure:(void(^)())failure;
 - (void)dismissFriendRequestForUser:(User*)user withId:(NSString*)friendId withSuccess:(void(^)())success failure:(void(^)())failure;
+- (void)getUser:(User*)user withSuccess:(void(^)(User* user))success failure:(void(^)())failure;
 
 @end
