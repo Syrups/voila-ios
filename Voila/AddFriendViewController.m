@@ -9,6 +9,7 @@
 #import "AddFriendViewController.h"
 #import "User.h"
 #import "UserSession.h"
+#import "UIImageView+WebCache.h"
 
 @interface AddFriendViewController ()
 
@@ -20,6 +21,8 @@
     [super viewDidLoad];
     
     self.userManager = [[UserManager alloc] init];
+    
+    [self.profileImageBackground sd_setImageWithURL:[[UserSession sharedSession] avatarUrl]];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -107,6 +110,10 @@
     if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
         [cell setLayoutMargins:UIEdgeInsetsZero];
     }
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
 }
 
 @end

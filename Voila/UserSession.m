@@ -37,6 +37,7 @@ static UserSession* sharedSession;
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     self.id = [defaults objectForKey:kSessionStoreId];
     self.token = [defaults objectForKey:kSessionStoreToken];
+    self.avatarUrl = [NSURL URLWithString:(NSString*)[defaults objectForKey:kSessionStoreAvatarUrl]];
     
     [Api setUserId:self.id];
     [Api setUserToken:self.token];
@@ -76,6 +77,7 @@ static UserSession* sharedSession;
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:self.id forKey:kSessionStoreId];
     [defaults setObject:self.token forKey:kSessionStoreToken];
+    [defaults setObject:self.avatarUrl.absoluteString forKey:kSessionStoreAvatarUrl];
     [defaults synchronize];
 }
 
@@ -83,6 +85,7 @@ static UserSession* sharedSession;
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     [defaults removeObjectForKey:kSessionStoreId];
     [defaults removeObjectForKey:kSessionStoreToken];
+    [defaults removeObjectForKey:kSessionStoreAvatarUrl];
     [defaults synchronize];
 }
 

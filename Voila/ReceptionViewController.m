@@ -14,11 +14,9 @@
 #import "Configuration.h"
 #import "SDWebImagePrefetcher.h"
 
-@interface ReceptionViewController ()
-
-@end
-
-@implementation ReceptionViewController
+@implementation ReceptionViewController {
+    UIView* fullPreview;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -32,8 +30,8 @@
         NSMutableArray* urls = [NSMutableArray array];
         
         for (Proposition* prop in self.received) {
-            NSLog(@"%@", [kMediaUrl stringByAppendingString:prop.image]);
-            [urls addObject:[NSURL URLWithString:[kMediaUrl stringByAppendingString:prop.image]]];
+            NSLog(@"%@", MediaUrl(prop.image));
+            [urls addObject:[NSURL URLWithString:MediaUrl(prop.image)]];
         }
         
         [[SDWebImagePrefetcher sharedImagePrefetcher] prefetchURLs:urls];
@@ -59,7 +57,7 @@
     }
     
     UIImageView* image = (UIImageView*)[cell.contentView viewWithTag:10];
-    [image sd_setImageWithURL:[NSURL URLWithString:[kMediaUrl stringByAppendingString:proposition.image]]];
+    [image sd_setImageWithURL:[NSURL URLWithString:MediaUrl(proposition.image)]];
     
     return cell;
 }
@@ -82,6 +80,25 @@
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     return UIEdgeInsetsZero;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    Proposition* proposition = [self.received objectAtIndex:indexPath.row];
+    UIView* full = [[UIView alloc] initWithFrame:self.view.frame];
+    UIImageView* image = [[UIImageView alloc] initWithFrame:full.frame];
+    [image sd_setImageWithURL:[NSURL URLWithString:MediaUrl(proposition.image)]];
+    
+    [full addSubview:image];
+    
+    UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapFullImage:)];
+    [full addGestureRecognizer:tap];
+    
+    [self.view addSubview:full];
+    fullPreview = full;
+}
+
+-(void)didTapFullImage:(UITapGestureRecognizer*)recognizer {
+    [fullPreview removeFromSuperview];
 }
 
 @end

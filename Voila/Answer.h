@@ -8,6 +8,7 @@
 
 #import "JSONModel.h"
 #import "Proposition.h"
+#import "User.h"
 
 @interface Answer : JSONModel
 
@@ -15,6 +16,8 @@
 @property (strong, nonatomic) Proposition* proposition;
 @property (strong, nonatomic) NSString* answer;
 @property (strong, nonatomic) NSString* answeredAt;
+@property (strong, nonatomic) User<Optional>* from;
+@property (strong, nonatomic) User<Optional>* to;
 @property (assign, nonatomic) BOOL acknowledged;
 
 @end

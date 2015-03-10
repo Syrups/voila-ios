@@ -16,5 +16,6 @@
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView* activityIndicator;
 @property (strong, nonatomic) NSArray* results;
 @property (strong, nonatomic) UserManager* userManager;
+@property (strong, nonatomic) IBOutlet UIImageView* profileImageBackground;
 
 @end

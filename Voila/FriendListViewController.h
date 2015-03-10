@@ -16,5 +16,6 @@
 @property (strong, nonatomic) NSMutableArray* filteredFriends;
 @property (strong, nonatomic) IBOutlet UITableView* friendsTableView;
 @property (strong, nonatomic) IBOutlet UIView* requestsLed;
+@property (strong, nonatomic) IBOutlet UIImageView* profileImageBackground;
 
 @end

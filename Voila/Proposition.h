@@ -22,6 +22,7 @@
 @property (strong, nonatomic) NSArray<User, ConvertOnDemand>* resenders;
 @property (strong, nonatomic) NSArray<User, ConvertOnDemand>* takers;
 @property (strong, nonatomic) NSArray<User, ConvertOnDemand>* dismissers;
+@property (strong, nonatomic) NSArray<Optional>* allReceivers;
 @property (strong, nonatomic) NSString* sentAt;
 @property (strong, nonatomic) Proposition<Optional>* originalProposition;
 

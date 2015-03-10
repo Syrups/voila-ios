@@ -22,7 +22,8 @@
     [self setNeedsStatusBarAppearanceUpdate];
     
     self.registerButton.layer.borderColor = RgbColorAlpha(124, 125, 129, 1).CGColor;
-    [self.passwordField setLeftImage:[UIImage imageNamed:@"field-password.png"]];
+    self.usernameField.leftView  = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"field-username"]];
+    self.passwordField.leftView  = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"field-password"]];
     
     [[UserSession sharedSession] load];
 //    [[UserSession sharedSession] destroy];
@@ -61,6 +62,11 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
+    
+    if ([textField isEqual:self.passwordField]) {
+        [self requestLogin:textField];
+    }
+    
     return YES;
 }
 

@@ -25,7 +25,7 @@
     self.textColor = RgbColorAlpha(124, 125, 129, 1);
     
     self.leftViewMode = UITextFieldViewModeAlways;
-    self.leftView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"field-username"]];
+//    self.leftView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"field-username"]];
     self.leftView.contentMode = UIViewContentModeScaleAspectFit;
     self.leftView.frame = CGRectMake(0, 0, 25, self.frame.size.height);
     

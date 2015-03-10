@@ -47,6 +47,8 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"%@", error);
+        
+        if (failure) failure();
     }];
     
     [op start];
@@ -87,7 +89,7 @@
         [uploader uploadImage:image withSuccess:^(NSString *filename) {
             
             // Also cache uploaded image to local phone cache
-            NSURL* url = [NSURL URLWithString:[kMediaUrl stringByAppendingString:filename]];
+            NSURL* url = [NSURL URLWithString:MediaUrl(filename)];
             [[SDWebImagePrefetcher sharedImagePrefetcher] prefetchURLs:@[url]];
             
             NSMutableURLRequest* request = [Api getBaseRequestFor:@"/propositions" authenticated:YES method:@"POST"].mutableCopy;
@@ -213,8 +215,8 @@
 }
 
 - (void)getSentPropositionsOfUser:(User *)user success:(void (^)(NSArray *))success failure:(void (^)())failure {
-    NSMutableURLRequest* request = [Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@/received", user.id] authenticated:YES method:@"GET"].mutableCopy;
-//    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad]; // cache popular propositions
+    NSMutableURLRequest* request = [Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@/sent", user.id] authenticated:YES method:@"GET"].mutableCopy;
+    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad]; // cache popular propositions
     
     AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request.copy];
     
@@ -261,6 +263,13 @@
     }
     
     return [body dataUsingEncoding:NSUTF8StringEncoding];
+}
+
+#pragma mark - Cache management
+
+- (void)clearCacheForSentPropositionsForUser:(User*)user {
+    [[NSURLCache sharedURLCache] removeCachedResponseForRequest:[Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@/sent", user.id] authenticated:YES method:@"GET"]];
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
 @end

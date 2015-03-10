@@ -12,6 +12,7 @@
 @interface MenuViewController : UIViewController
 
 @property (strong, nonatomic) CaptureViewController* masterViewController;
+@property (strong, nonatomic) IBOutlet UIView* requestsLed;
 
 - (IBAction)close:(id)sender;
 - (void)didCloseMenu;

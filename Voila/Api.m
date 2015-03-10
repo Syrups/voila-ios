@@ -18,7 +18,7 @@ static NSString *userName;
 
 + (NSURLRequest *) getBaseRequestFor:(NSString *)path authenticated:(BOOL)authenticated method:(NSString *)method {
 
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kApiRootUrl, path] ] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL: [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", kApiRootUrl, path] ] cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:8];
     
     [request setHTTPMethod:method];
     NSMutableURLRequest *mutableRequest = [request mutableCopy];

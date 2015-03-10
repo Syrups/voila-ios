@@ -17,6 +17,7 @@
 #import "UserSession.h"
 #import "UserManager.h"
 #import "Cache.h"
+#import "OutboxManager.h"
 
 @implementation CaptureViewController {
     NSArray* pendingPropositions;
@@ -39,6 +40,10 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    if (![[UserSession sharedSession] hasPendingFriendRequests]) {
+        self.friendRequestsLed.hidden = YES;
+    }
+    
     PropositionManager* manager = [[PropositionManager alloc] init];
     
     [manager findPendingPropositionsAndAnswersWithSuccess:^(NSArray* propositions, NSArray* answers){
@@ -46,7 +51,7 @@
         NSMutableArray* urls = [NSMutableArray array];
         
         for (Proposition* p in propositions) {
-            [urls addObject:[NSURL URLWithString:[kMediaUrl stringByAppendingString:p.image]]];
+            [urls addObject:[NSURL URLWithString:MediaUrl(p.image)]];
         }
         
         [[SDWebImagePrefetcher sharedImagePrefetcher] prefetchURLs:urls progress:nil completed:^(NSUInteger noOfFinishedUrls, NSUInteger noOfSkippedUrls) {
@@ -58,7 +63,7 @@
         pendingAnswers = answers;
         pendingPropositions = propositions;
     } failure:^{
-        
+        ErrorAlert(@"Pas de connexion Internet");
     }];
     
     UserManager* userManager = [[UserManager alloc] init];
@@ -76,6 +81,17 @@
         
     }];
     
+    if ([OutboxManager sharedManager].pendingShipments.count > 0) {
+        self.outboxLed.hidden = NO;
+    } else {
+        self.outboxLed.hidden = YES;
+    }
+    
+    [self.captureSession startRunning];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [self.captureSession stopRunning];
 }
 
 - (void) presentCapturedImage:(UIImage*)image {
@@ -106,6 +122,12 @@
 - (IBAction)displayMenu:(id)sender {
     if (self.menu.view.frame.origin.x != -self.view.frame.size.width) return;
     
+    MenuViewController* menuVc = (MenuViewController*) self.menu.viewControllers[0];
+    
+    if ([[UserSession sharedSession] hasPendingFriendRequests]) {
+        menuVc.requestsLed.hidden = NO;
+    }
+    
     [UIView animateWithDuration:0.3f delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         CGRect f = self.menu.view.frame;
         f.origin.x += 200;
@@ -115,7 +137,7 @@
 
 - (IBAction)closeMenu:(id)sender {
     if (self.menu.view.frame.origin.x == -self.view.frame.size.width) {
-        [self performSegueWithIdentifier:@"ToNotificationsSegue" sender:sender];
+        [self performSegueWithIdentifier:@"ToHistorySegue" sender:sender];
     } else {
         [UIView animateWithDuration:0.3f delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             CGRect f = self.menu.view.frame;
@@ -139,7 +161,7 @@
     CALayer *border = [CALayer layer];
     border.frame = CGRectMake(menu.view.frame.size.width-1, 0, 1, menu.view.frame.size.height);
     border.backgroundColor = [UIColor grayColor].CGColor;
-    [menu.view.layer addSublayer:border];
+//    [menu.view.layer addSublayer:border];
     
     MenuViewController* menuVc = (MenuViewController*) menu.viewControllers[0];
     menuVc.masterViewController = self;
@@ -238,6 +260,10 @@
     
     [self.captureButton addTarget:self action:@selector(captureNow) forControlEvents:UIControlEventTouchUpInside];
     [self.switchCameraButton addTarget:self action:@selector(switchCameraDevice:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UITapGestureRecognizer* doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(captureNow)];
+    doubleTap.numberOfTapsRequired = 2;
+    [capturePreviewView addGestureRecognizer:doubleTap];
 }
 
 -(IBAction) captureNow
@@ -262,6 +288,12 @@
         
         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
         UIImage *image = [[UIImage alloc] initWithData:imageData];
+        
+        if (isFrontCamera) {
+            image = [UIImage imageWithCGImage:image.CGImage
+                                        scale:image.scale
+                                  orientation:UIImageOrientationLeftMirrored];
+        }
         
         [self presentCapturedImage:image];
     }];

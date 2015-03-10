@@ -10,8 +10,9 @@
 #import "MenuViewController.h"
 #import "User.h"
 
-@interface ProfileViewController : UIViewController
+@interface ProfileViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate>
 
+@property (strong, nonatomic) IBOutlet UICollectionView* sentCollectionView;
 @property (strong, nonatomic) MenuViewController* menu;
 @property (strong, nonatomic) User* user;
 @property (strong, nonatomic) NSArray* popular;
@@ -22,6 +23,7 @@
 @property (strong, nonatomic) IBOutlet UILabel* acceptedCountLabel;
 @property (strong, nonatomic) IBOutlet UILabel* takenCountLabel;
 @property (strong, nonatomic) IBOutlet UIImageView* profileImage;
+@property (strong, nonatomic) IBOutlet UIImageView* profileImageBackground;
 @property (strong, nonatomic) IBOutlet UIScrollView* popularScrollView;
 
 @end

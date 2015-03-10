@@ -21,9 +21,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.image sd_setImageWithURL:[NSURL URLWithString:[kMediaUrl stringByAppendingString:self.answer.proposition.image]]];
+    [self.image sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.answer.proposition.image)]];
     self.image.contentMode = UIViewContentModeScaleAspectFill;
     self.okButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    
+    if (self.answer.from.avatar != nil) {
+        [self.fromProfileImage sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.answer.from.avatar)]];
+    }
+    
+    if (self.answer.to.avatar != nil) {
+        [self.toProfileImage sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.answer.to.avatar)]];
+    }
+    
+    self.fromUsername.text = self.answer.from.username;
+    self.toUsername.text = self.answer.to.username;
     
     AnswerManager* manager = [[AnswerManager alloc] init];
     [manager acknowledgeAnswer:self.answer withSuccess:^{
@@ -38,7 +49,7 @@
 - (void)reveal {
     [UIView animateWithDuration:0.5f animations:^{
         self.overlay.alpha = 0.7f;
-        self.topView.alpha = 0;
+//        self.topView.alpha = 0;
         self.okButton.alpha = 1;
         
         if ([self.answer.answer isEqualToString:@"yes"]) {

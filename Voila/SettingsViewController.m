@@ -55,16 +55,28 @@
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 0) {
+    if (indexPath.row == 3) {
         [self logout:nil];
+    }
+    
+    if (indexPath.row == 1) {
+        [self performSegueWithIdentifier:@"ToAvatarSegue" sender:nil];
     }
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 1) {
+    if (indexPath.row == 0) {
         UILabel* username = (UILabel*)[cell.contentView viewWithTag:10];
         username.text = self.user.username;
     }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row == 1) {
+        return 68;
+    }
+    
+    return 45;
 }
 
 @end

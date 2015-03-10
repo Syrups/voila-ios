@@ -24,4 +24,8 @@
 - (void)takeProposition:(Proposition*)proposition withSuccess:(void(^)())success failure:(void(^)())failure;
 - (void)dismissProposition:(Proposition*)proposition withSuccess:(void(^)())success failure:(void(^)())failure;
 
+# pragma mark - Cache management
+
+- (void)clearCacheForSentPropositionsForUser:(User*)user;
+
 @end

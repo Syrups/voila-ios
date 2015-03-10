@@ -12,5 +12,6 @@
 
 @property (strong, nonatomic) NSMutableArray* requests;
 @property (strong, nonatomic) IBOutlet UITableView* requestsTableView;
+@property (strong, nonatomic) IBOutlet UIImageView* profileImageBackground;
 
 @end

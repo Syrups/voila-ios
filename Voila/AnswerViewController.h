@@ -21,5 +21,7 @@
 @property (strong, nonatomic) IBOutlet UIButton* okButton;
 @property (strong, nonatomic) IBOutlet UIImageView* fromProfileImage;
 @property (strong, nonatomic) IBOutlet UIImageView* toProfileImage;
+@property (strong, nonatomic) IBOutlet UILabel* fromUsername;
+@property (strong, nonatomic) IBOutlet UILabel* toUsername;
 
 @end

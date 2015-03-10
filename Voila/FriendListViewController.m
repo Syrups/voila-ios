@@ -9,6 +9,7 @@
 #import "FriendListViewController.h"
 #import "UserManager.h"
 #import "UserSession.h"
+#import "UIImageView+WebCache.h"
 
 @interface FriendListViewController ()
 
@@ -36,6 +37,8 @@
     } else {
         self.requestsLed.hidden = YES;
     }
+    
+    [self.profileImageBackground sd_setImageWithURL:[[UserSession sharedSession] avatarUrl]];
 }
 
 - (void)viewDidLayoutSubviews {

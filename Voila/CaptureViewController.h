@@ -13,6 +13,7 @@
 
 @property (strong, nonatomic) UINavigationController* menu;
 @property (strong, nonatomic) IBOutlet UIImageView* notificationsLed;
+@property (strong, nonatomic) IBOutlet UIImageView* outboxLed;
 @property (strong, nonatomic) IBOutlet UIImageView* friendRequestsLed;
 @property(strong, nonatomic) AVCaptureSession *captureSession;
 @property(strong, nonatomic) AVCaptureVideoPreviewLayer *captureVideoPreviewLayer;

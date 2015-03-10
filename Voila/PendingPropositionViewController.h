@@ -15,6 +15,7 @@
 
 @property (strong, nonatomic) IBOutlet UIView* topView;
 @property (strong, nonatomic) IBOutlet UILabel* senderNameLabel;
+@property (strong, nonatomic) IBOutlet UIImageView* senderAvatar;
 @property (strong, nonatomic) IBOutlet UIImageView* image;
 @property (strong, nonatomic) IBOutlet UIButton* okButton;
 

@@ -11,6 +11,8 @@
 #import "AFNetworking.h"
 #import "UserSession.h"
 #import "AppDelegate.h"
+#import "ImageUploader.h"
+#import "Configuration.h"
 
 @implementation UserManager
 
@@ -91,7 +93,7 @@
 
 }
 
-- (void)createUserWithUsername:(NSString *)username password:(NSString *)password email:(NSString *)email success:(void (^)())success failure:(void (^)())failure {
+- (void)createUserWithUsername:(NSString *)username password:(NSString *)password email:(NSString *)email success:(void (^)())success failure:(void (^)())failure failureUsernameUnavailable:(void (^)())failureUsernameUnavailable {
     
     NSMutableURLRequest* request = [Api getBaseRequestFor:@"/users" authenticated:NO method:@"POST"].mutableCopy;
     [request setHTTPBody:[self httpBodyForUsername:username password:password email:email]];
@@ -109,8 +111,8 @@
 
         success();
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
-        if (failure != nil) failure();
+        if (operation.response.statusCode == 409 && failureUsernameUnavailable != nil) failureUsernameUnavailable();
+        else if (failure != nil) failure();
     }];
     
     [op start];
@@ -176,6 +178,35 @@
     }];
     
     [op start];
+}
+
+- (void)updateAvaterOfUser:(User *)user withImage:(id)image success:(void (^)(NSURL* avatarUrl))success failure:(void (^)())failure {
+    ImageUploader* uploader = [[ImageUploader alloc] init];
+    
+    [uploader uploadImage:image withSuccess:^(NSString *filename) {
+        NSMutableURLRequest* request = [Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@", user.id] authenticated:YES method:@"PUT"].mutableCopy;
+        [request setHTTPBody:[[NSString stringWithFormat:@"{ \"avatar\": \"%@\" }", filename] dataUsingEncoding:NSUTF8StringEncoding]];
+        AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+        
+        op.responseSerializer = [AFJSONResponseSerializer serializer];
+        
+        [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+            
+            [[NSURLCache sharedURLCache] removeAllCachedResponses]; // remove friends cache
+            
+            success([NSURL URLWithString:MediaUrl(filename)]);
+            
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"%@", error);
+            failure();
+        }];
+        
+        [op start];
+    } failure:^(NSError *error) {
+        if (failure) {
+            failure();
+        }
+    }];
 }
 
 - (NSData*)httpBodyForUsername:(NSString*)username password:(NSString*)password email:(NSString*)email {

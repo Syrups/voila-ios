@@ -36,7 +36,7 @@
     
     if (self.childViewController != nil) {
         self.mainViewController.notificationsLed.hidden = YES;
-        self.mainViewController.notificationsButton.enabled = NO;
+//        self.mainViewController.notificationsButton.enabled = NO;
         [self.childViewController.view removeFromSuperview];
         [self.childViewController removeFromParentViewController];
     }

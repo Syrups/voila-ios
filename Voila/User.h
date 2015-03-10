@@ -17,6 +17,7 @@
 @property (strong, nonatomic) NSString* id;
 @property (strong, nonatomic) NSString* username;
 @property (strong, nonatomic) NSString<Optional>* token;
+@property (strong, nonatomic) NSString<Optional>* avatar;
 @property (assign, nonatomic) NSInteger sent;
 @property (assign, nonatomic) NSInteger taken;
 @property (strong, nonatomic) NSArray<User, Optional, ConvertOnDemand>* friends;

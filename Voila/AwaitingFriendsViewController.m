@@ -10,6 +10,7 @@
 #import "User.h"
 #import "UserManager.h"
 #import "UserSession.h"
+#import "UIImageView+WebCache.h"
 
 @interface AwaitingFriendsViewController ()
 
@@ -31,6 +32,8 @@
     } failure:^{
         
     }];
+    
+    [self.profileImageBackground sd_setImageWithURL:[[UserSession sharedSession] avatarUrl]];
 }
 
 - (IBAction)acceptRequest:(id)sender {
@@ -108,6 +111,10 @@
     if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
         [cell setLayoutMargins:UIEdgeInsetsZero];
     }
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
 }
 
 @end

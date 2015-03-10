@@ -7,6 +7,7 @@
 //
 
 #import "MenuViewController.h"
+#import "UserSession.h"
 
 @interface MenuViewController ()
 
@@ -16,7 +17,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if ([[UserSession sharedSession] hasPendingFriendRequests]) {
+        self.requestsLed.hidden = NO;
+    } else {
+        self.requestsLed.hidden = YES;
+    }
 }
 
 

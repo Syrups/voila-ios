@@ -12,6 +12,8 @@
 #import "UserSession.h"
 #import "FriendSwitch.h"
 #import "PropositionManager.h"
+#import "OutboxManager.h"
+#import "PKAIDecoder.h"
 
 @implementation FriendPickerViewController
 
@@ -67,21 +69,33 @@
     PropositionManager* manager = [[PropositionManager alloc] init];
     UIView* sending = [[[NSBundle mainBundle] loadNibNamed:@"Sending" owner:self options:nil] objectAtIndex:0];
     sending.frame = self.view.frame;
+    
+    UIImageView* loaderImage = (UIImageView*)[sending.subviews objectAtIndex:0];
+    [PKAIDecoder builAnimatedImageIn:loaderImage fromFile:@"loader"];
+    
     [self.view addSubview:sending];
     
     [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
     
     [manager sendPropositionWithImage:self.image users:self.selectedFriends originalProposition:self.originalProposition  success:^{
-        if (self.isOriginal) {
-            [self.navigationController popToRootViewControllerAnimated:NO];
-        } else {
-            [sending removeFromSuperview];
-            [self dismiss:sender];
-            [(PendingPropositionViewController*)self.parentViewController requestNext:sender];
-        }
+        [sending removeFromSuperview];
+        [self close];
     } failure:^{
         // ERROR
+        [[OutboxManager sharedManager] addPendingPropositionWithImage:self.image users:self.selectedFriends originalProposition:self.originalProposition];
+//        NSLog(@"%@", [[OutboxManager sharedManager] pendingShipments]);
+        [sending removeFromSuperview];
+        [self close];
     }];
+}
+
+- (void)close {
+    if (self.isOriginal) {
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    } else {
+        [self dismiss:nil];
+        [(PendingPropositionViewController*)self.parentViewController requestNext:nil];
+    }
 }
 
 #pragma mark - UITableView
@@ -90,13 +104,42 @@
     return self.friends.count;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    User* friend = [self.friends objectAtIndex:indexPath.row];
+    if (self.isOriginal && [friend.id isEqualToString:self.originalProposition.sender.id]) {
+        return 0;
+    }
+    
+    return 72;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"FriendCell"];
     User* friend = [self.friends objectAtIndex:indexPath.row];
     
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FriendCell"];
+//    NSLog(@"%@", self.originalProposition.allReceivers);
+    
+    // Check if this friend has already received this proposition
+    // and if so, disable sending to him
+    if (!self.isOriginal) {
+        if ([self.originalProposition.allReceivers containsObject:friend.id]) {
+            cell = [tableView dequeueReusableCellWithIdentifier:@"FriendCellAlready"];
+            
+            if (cell == nil) {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FriendCellAlready"];
+                
+            }
+        }
+    } else {
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FriendCell"];
+        }
     }
+    
+    FriendSwitch* btn = (FriendSwitch*)[cell.contentView viewWithTag:30];
+    btn.friendId = friend.id;
+    [btn addTarget:self action:@selector(toggleFriendSelection:) forControlEvents:UIControlEventTouchUpInside];
+    
     
     UIImageView* profilePic = (UIImageView*)[cell.contentView viewWithTag:10];
     profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
@@ -104,9 +147,8 @@
     UILabel* name = (UILabel*)[cell.contentView viewWithTag:20];
     name.text = friend.username;
     
-    FriendSwitch* btn = (FriendSwitch*)[cell.contentView viewWithTag:30];
-    btn.friendId = friend.id;
-    [btn addTarget:self action:@selector(toggleFriendSelection:) forControlEvents:UIControlEventTouchUpInside];
+    if (btn.on && ![self.selectedFriends containsObject:friend.id]) [btn toggleOnOff];
+    if (!btn.on && [self.selectedFriends containsObject:friend.id]) [btn toggleOnOff];
     
     return cell;
 }

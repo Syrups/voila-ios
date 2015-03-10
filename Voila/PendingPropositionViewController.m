@@ -17,7 +17,13 @@
 @implementation PendingPropositionViewController
 
 - (void)viewDidLoad {
-    [self.image sd_setImageWithURL:[NSURL URLWithString:[kMediaUrl stringByAppendingString:self.proposition.image]]];
+    [self.image sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.proposition.image)]];
+    if (self.proposition.sender.avatar != nil) {
+        [self.senderAvatar sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.proposition.sender.avatar)]];
+    } else {
+        [self.senderAvatar setImage:[UIImage imageNamed:@"johndoe"]];
+    }
+    
     self.senderNameLabel.text = self.proposition.sender.username;
     self.okButton.layer.borderColor = [UIColor whiteColor].CGColor;
 }
