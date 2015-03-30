@@ -26,4 +26,6 @@
 @property (strong, nonatomic) IBOutlet UIImageView* profileImageBackground;
 @property (strong, nonatomic) IBOutlet UIScrollView* popularScrollView;
 
+@property (strong, nonatomic) IBOutlet UILabel* startLabel;
+
 @end

@@ -11,6 +11,7 @@
 #import "Configuration.h"
 #import "LoginViewController.h"
 #import "AvatarViewController.h"
+#import "WebViewController.h"
 
 @interface SignUpViewController ()
 
@@ -63,6 +64,13 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+- (IBAction)displayTerms:(id)sender {
+    WebViewController* vc = (WebViewController*)[self.storyboard instantiateViewControllerWithIdentifier:@"Webview"];
+    vc.url = @"http://syrups.github.io/tenveux/terms";
+    
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 #pragma mark - UITextField
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -71,5 +79,8 @@
     return YES;
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
+}
 
 @end

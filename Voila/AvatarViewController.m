@@ -38,7 +38,7 @@
     AVCaptureDevice *inputDevice = [self cameraWithPosition:AVCaptureDevicePositionFront];
     AVCaptureDeviceInput *captureInput = [AVCaptureDeviceInput deviceInputWithDevice:inputDevice error:nil];
     if (!captureInput) {
-        NSLog(@"No capture input available.");
+        // NSLog(@"No capture input available.");
         
         return;
     }
@@ -109,7 +109,7 @@
         }
     }
     
-    NSLog(@"about to request a capture from: %@", self.stillImageOutput);
+    // NSLog(@"about to request a capture from: %@", self.stillImageOutput);
     [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
         
         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
@@ -118,27 +118,35 @@
 //        CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], self.previewView.frame);
 //        self.avatar = [UIImage imageWithCGImage:imageRef];
 //        CGImageRelease(imageRef);
-        self.avatar = [self scaleImage:image toSize:self.previewView.frame.size];
         
-        UIImageView* avatarPreview = [[UIImageView alloc] initWithImage:self.avatar];
-        avatarPreview.contentMode = UIViewContentModeScaleAspectFill;
-        avatarPreview.frame = CGRectMake(0, 0, self.previewView.frame.size.width, self.previewView.frame.size.height);
-        [self.previewView addSubview:avatarPreview];
-        
-        self.previewView.layer.borderWidth = 1.0f;
-        self.previewView.layer.borderColor = [UIColor whiteColor].CGColor;
-        
-        self.captureButton.hidden = YES;
-        self.validateButton.hidden = NO;
+        [self presentCapturedImage:image mirrored:YES];
     }];
+}
+
+- (void)presentCapturedImage:(UIImage*)image mirrored:(BOOL)mirrored {
+    self.avatar = [self scaleImage:image toSize:self.previewView.frame.size mirrored:mirrored];
+    
+    UIImageView* avatarPreview = [[UIImageView alloc] initWithImage:self.avatar];
+    avatarPreview.contentMode = UIViewContentModeScaleAspectFill;
+    avatarPreview.frame = CGRectMake(0, 0, self.previewView.frame.size.width, self.previewView.frame.size.height);
+    [self.previewView addSubview:avatarPreview];
+    
+    self.previewView.layer.borderWidth = 1.0f;
+    self.previewView.layer.borderColor = [UIColor whiteColor].CGColor;
+    
+    self.captureButton.hidden = YES;
+    self.validateButton.hidden = NO;
 }
 
 - (IBAction)confirmUpload:(id)sender {
     UserManager* manager = [[UserManager alloc] init];
     
+    self.activityIndicator.hidden = NO;
+    
     [manager updateAvaterOfUser:[[UserSession sharedSession] user] withImage:self.avatar success:^(NSURL * avatarUrl) {
         [[UserSession sharedSession] setAvatarUrl:avatarUrl];
         [[UserSession sharedSession] store];
+        self.activityIndicator.hidden = YES;
         [self back:sender];
     } failure:^{
         // ERROR
@@ -147,7 +155,7 @@
 
 #pragma mark - Camera image compression
 
-- (UIImage*) scaleImage:(UIImage*)image toSize:(CGSize)newSize {
+- (UIImage*) scaleImage:(UIImage*)image toSize:(CGSize)newSize mirrored:(BOOL)mirrored {
     CGSize scaledSize = newSize;
     float scaleFactor = 1.0;
     if( image.size.width > image.size.height ) {
@@ -167,9 +175,36 @@
     UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    return [UIImage imageWithCGImage:scaledImage.CGImage
-                               scale:scaledImage.scale
-                         orientation:UIImageOrientationUpMirrored];
+    UIImage* finalImage = scaledImage;
+    
+    if (mirrored) {
+        finalImage = [UIImage imageWithCGImage:scaledImage.CGImage
+                            scale:scaledImage.scale
+                                   orientation:UIImageOrientationUpMirrored];
+    }
+    
+    return finalImage;
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
+}
+
+#pragma mark - Image picking
+
+- (IBAction)requestImagePicker:(id)sender {
+    UIImagePickerController* picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    
+    [self presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    UIImage* image = [info objectForKey:UIImagePickerControllerOriginalImage];
+    
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    
+    [self presentCapturedImage:image mirrored:NO];
 }
 
 @end

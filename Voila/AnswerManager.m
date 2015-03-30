@@ -22,7 +22,7 @@
         success();
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
         failure();
     }];
     

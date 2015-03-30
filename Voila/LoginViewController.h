@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SRUnderlinedLabel.h"
 
-@interface LoginViewController : UIViewController <UITextFieldDelegate>
+@interface LoginViewController : UIViewController <UITextFieldDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) IBOutlet SRUnderlinedLabel* usernameField;
 @property (strong, nonatomic) IBOutlet SRUnderlinedLabel* passwordField;

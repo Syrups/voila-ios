@@ -15,6 +15,15 @@
     [super viewDidLoad];
     
     self.imageView.image = self.image;
+    
+    // NSLog(@"%@", self.image);
+    
+    UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(presentFriendPicker:)];
+    
+    [self.imageView addGestureRecognizer:tap];
+    self.imageView.userInteractionEnabled = YES;
+    
+    [self.view setNeedsDisplay];
 }
 
 - (IBAction)presentFriendPicker:(id)sender {

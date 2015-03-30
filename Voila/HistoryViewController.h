@@ -13,7 +13,7 @@
 
 @property (strong, nonatomic) IBOutlet UITableView* historyTableView;
 @property (strong, nonatomic) OutboxManager* outbox;
-@property (strong, nonatomic) NSArray* sent;
+@property (strong, nonatomic) NSMutableArray* sent;
 
 @property (strong, nonatomic) UIView* sending;
 @property (strong, nonatomic) UIRefreshControl* refreshControl;

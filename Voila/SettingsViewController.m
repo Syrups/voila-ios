@@ -10,6 +10,8 @@
 #import "UserSession.h"
 #import "Cache.h"
 #import "UserManager.h"
+#import "Configuration.h"
+#import "UIImageView+WebCache.h"
 
 @interface SettingsViewController ()
 
@@ -34,6 +36,8 @@
         } failure:^{
             // ERROR
         }];
+    } else {
+        [self updateView];
     }
 
 }
@@ -49,14 +53,23 @@
 }
 
 - (void)updateView {
-    
 }
 
 #pragma mark - UITableViewDelegate
 
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 3) {
+    if (indexPath.row == 4) {
         [self logout:nil];
+    }
+    
+    if (indexPath.row == 3) {
+        [self performSegueWithIdentifier:@"ToWebview" sender:nil];
+    }
+    
+    if (indexPath.row == 2) {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Souhaitez-vous vraiment supprimer vos données et votre compte ? Cette action est irréversible" delegate:self cancelButtonTitle:@"Annuler" otherButtonTitles:@"Confirmer", nil];
+        [alert show];
     }
     
     if (indexPath.row == 1) {
@@ -69,6 +82,11 @@
         UILabel* username = (UILabel*)[cell.contentView viewWithTag:10];
         username.text = self.user.username;
     }
+    
+    if (indexPath.row == 1) {
+        UIImageView* avatar = (UIImageView*)[cell.contentView viewWithTag:10];
+        if (self.user.avatar != nil) [avatar sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.user.avatar)]];
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -77,6 +95,40 @@
     }
     
     return 45;
+}
+
+- (void)confirmAccountDelete {
+    UserManager* manager = [[UserManager alloc] init];
+    UserSession* session = [UserSession sharedSession];
+    
+    [manager deleteAccountOfUser:[session user] success:^{
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Données supprimées" message:@"Vos données ont bien été effacées" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+        alert.tag = 2;
+        [alert show];
+        
+        // reset app storyboard
+        [self.menu close:nil];
+        UINavigationController* nav = [self.storyboard instantiateInitialViewController];
+        [nav setViewControllers:@[[self.storyboard instantiateViewControllerWithIdentifier:@"Login"]]];
+    } failure:^{
+        ErrorAlert(@"Votre compte n'a pas pu être supprimé en raison d'une erreur, rééssayez dans quelques instants.");
+    }];
+}
+
+#pragma mark - UIAlertView
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    // first alert
+    if (buttonIndex == 1 && alertView.tag == 0) {
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Confirmation" message:@"Votre compte, les services reçus et proposés à vos amis seront définitivement supprimés. Etes-vous certain ?" delegate:self cancelButtonTitle:@"Annuler" otherButtonTitles:@"Oui, supprimer", nil];
+        alert.tag = 1;
+        [alert show];
+    }
+    
+    // second alert
+    if (buttonIndex == 1 && alertView.tag == 1) {
+        [self confirmAccountDelete];
+    }
 }
 
 @end

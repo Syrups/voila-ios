@@ -53,6 +53,12 @@
     }];
 }
 
+- (IBAction)requestPasswordReset:(id)sender {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Mot de passe" message:@"Un nouveau mot de passe temporaire vous sera renvoyé sur votre adresse e-mail" delegate:self cancelButtonTitle:@"Annuler" otherButtonTitles:@"M'envoyer un email", nil];
+    
+    [alert show];
+}
+
 - (void) pushCaptureViewControllerAnimated:(BOOL)animated {
     UIViewController* vc = [self.storyboard instantiateViewControllerWithIdentifier:@"Capture"];
     [self.navigationController setViewControllers:@[vc] animated:animated];
@@ -68,6 +74,12 @@
     }
     
     return YES;
+}
+
+#pragma mark - UIAlertView
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    // TODO send reset email
 }
 
 

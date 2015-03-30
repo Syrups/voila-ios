@@ -10,7 +10,7 @@
 #import "MenuViewController.h"
 #import "User.h"
 
-@interface SettingsViewController : UIViewController <UITableViewDelegate>
+@interface SettingsViewController : UIViewController <UITableViewDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) MenuViewController* menu;
 @property (strong, nonatomic) UITableView* settingsTableView;

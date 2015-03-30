@@ -24,6 +24,10 @@
         [self.senderAvatar setImage:[UIImage imageNamed:@"johndoe"]];
     }
     
+    if (self.proposition.isPrivate) {
+        self.reproposeButton.hidden = YES;
+    }
+    
     self.senderNameLabel.text = self.proposition.sender.username;
     self.okButton.layer.borderColor = [UIColor whiteColor].CGColor;
 }
@@ -76,5 +80,28 @@
     [parent requestNextInStack:sender];
 }
 
+- (IBAction)report:(id)sender {
+    UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Signaler" message:@"Souhaitez-vous signaler ce contenu comme offensant ou ne respectant pas la charte ?" delegate:self cancelButtonTitle:@"Annuler" otherButtonTitles:@"Signaler et bloquer cet utilisateur", @"Signaler", nil];
+    [alert show];
+}
+
+#pragma mark - UIAlertView
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1) {
+        // report and block
+        [self didAnswerNoToCurrentProposition];
+        [self requestNext:nil];
+    } else if (buttonIndex == 2) {
+        // report only
+        [self didAnswerNoToCurrentProposition];
+        [self requestNext:nil];
+    }
+    
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
+}
 
 @end

@@ -31,10 +31,18 @@
         [manager getUser:[[UserSession sharedSession] user] withSuccess:^(User *user) {
             self.user = user;
             
+            [self.profileImage sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.user.avatar)]];
+            [self.profileImageBackground sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.user.avatar)]];
+            
             [self updateView];
         } failure:^{
             // ERROR
         }];
+    } else {
+        if (self.user.avatar != nil) {
+            [self.profileImage sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.user.avatar)]];
+            [self.profileImageBackground sd_setImageWithURL:[NSURL URLWithString:MediaUrl(self.user.avatar)]];
+        }
     }
     
     [propManager getPopularPropositionsOfUser:[[UserSession sharedSession] user] success:^(NSArray *popular) {
@@ -48,17 +56,38 @@
         self.sent = sent;
         [self.sentCollectionView reloadData];
         
+        if (self.sent.count == 0) {
+            self.startLabel.hidden = NO;
+        }
+        
     } failure:^{
         // ERROR
     }];
     
     self.profileImage.layer.borderColor = [UIColor whiteColor].CGColor;
-    [self.profileImage sd_setImageWithURL:[[UserSession sharedSession] avatarUrl]];
-    [self.profileImageBackground sd_setImageWithURL:[[UserSession sharedSession] avatarUrl]];
+    
+    
+    UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openAvatarViewController:)];
+    
+    [self.profileImage addGestureRecognizer:tap];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if ([[UserSession sharedSession] avatarUrl] != nil) {
+        [self.profileImage sd_setImageWithURL:[[UserSession sharedSession] avatarUrl]];
+        [self.profileImageBackground sd_setImageWithURL:[[UserSession sharedSession] avatarUrl]];
+    }
 }
 
 - (IBAction)dismiss:(id)sender {
     [self.menu close:sender];
+}
+
+- (IBAction)openAvatarViewController:(id)sender {
+    UIViewController* avatar = [self.storyboard instantiateViewControllerWithIdentifier:@"Avatar"];
+    [self presentViewController:avatar animated:YES completion:nil];
 }
 
 - (void)updateView {
@@ -82,6 +111,7 @@
         popularLabel.font = [UIFont fontWithName:@"AvenirNextLTPro-Regular" size:16];
         popularLabel.textColor = [UIColor whiteColor];
         [popularImage sd_setImageWithURL:[NSURL URLWithString:MediaUrl(proposition.image)]];
+        
         
         [popularView addSubview:popularImage];
         [popularView addSubview:popularLabel];
@@ -120,6 +150,26 @@
     [cell.contentView bringSubviewToFront:score];
     
     return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    Proposition* proposition = [self.sent objectAtIndex:indexPath.row];
+    UIView* full = [[UIView alloc] initWithFrame:self.view.frame];
+    UIImageView* image = [[UIImageView alloc] initWithFrame:full.frame];
+    image.contentMode = UIViewContentModeScaleAspectFill;
+    [image sd_setImageWithURL:[NSURL URLWithString:MediaUrl(proposition.image)]];
+    
+    [full addSubview:image];
+    
+    UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapFullImage:)];
+    [full addGestureRecognizer:tap];
+    
+    [self.view addSubview:full];
+    fullPreview = full;
+}
+
+-(void)didTapFullImage:(UITapGestureRecognizer*)recognizer {
+    [fullPreview removeFromSuperview];
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {

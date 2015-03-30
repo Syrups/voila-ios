@@ -30,11 +30,11 @@ static NSString *userName;
         
     }
     
-    NSLog(@"API REQUEST : %@", path);
+    // NSLog(@"API REQUEST : %@", path);
     
     request = [mutableRequest copy];
     
-    //    NSLog(@"Auth token: %@", userToken);
+    //    // NSLog(@"Auth token: %@", userToken);
     
     return request;
 }
@@ -52,12 +52,12 @@ static NSString *userName;
 }
 
 + (void) setUserToken:(NSString *)token {
-    NSLog(@"User API token set to: %@", token);
+    // NSLog(@"User API token set to: %@", token);
     userToken = token;
 }
 
 + (void) setUserId:(NSString *)id {
-    NSLog(@"User ID set to: %@", id);
+    // NSLog(@"User ID set to: %@", id);
     userId = id;
 }
 

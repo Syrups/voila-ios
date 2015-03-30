@@ -14,7 +14,9 @@
 #import "UIImageView+WebCache.h"
 #import "Configuration.h"
 
-@implementation HistoryViewController
+@implementation HistoryViewController {
+    UIView* fullPreview;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -93,19 +95,40 @@
         self.sending = sending;
         
         [self.outbox attemptSendPropositionAtIndex:indexPath.row];
+    } else {
+        Proposition* proposition = [self.sent objectAtIndex:indexPath.row];
+        UIView* full = [[UIView alloc] initWithFrame:self.view.frame];
+        UIImageView* image = [[UIImageView alloc] initWithFrame:full.frame];
+        image.contentMode = UIViewContentModeScaleAspectFill;
+        [image sd_setImageWithURL:[NSURL URLWithString:MediaUrl(proposition.image)]];
+        
+        [full addSubview:image];
+        
+        UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapFullImage:)];
+        [full addGestureRecognizer:tap];
+        
+        [self.view addSubview:full];
+        fullPreview = full;
     }
 }
 
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return YES if you want the specified item to be editable.
-    return YES;
+-(void)didTapFullImage:(UITapGestureRecognizer*)recognizer {
+    [fullPreview removeFromSuperview];
 }
+
+
+//- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+//    // Return YES if you want the specified item to be editable.
+//    return YES;
+//}
 
 // Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-    }
-}
+//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+//    if (editingStyle == UITableViewCellEditingStyleDelete) {
+//        [self.sent removeObjectAtIndex:indexPath.row+self.outbox.pendingShipments.count];
+//        [self.historyTableView reloadData];
+//    }
+//}
 
 #pragma mark - Cell helpers
 
@@ -162,6 +185,11 @@
     [self.historyTableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
+
+-(NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return @"Masquer";
+}
+
 #pragma mark - OutboxManager
 
 - (void)outboxManager:(OutboxManager *)manager didSucceedSendingPropositionAtIndex:(NSUInteger)index {
@@ -180,7 +208,7 @@
     NSMutableString* label = [NSMutableString stringWithFormat:@"%@", ((User*)receivers[0]).username];
     
     if (receivers.count > 1) {
-        [label appendString:[NSString stringWithFormat:@" et %ld autres", receivers.count-1]];
+        [label appendString:[NSString stringWithFormat:@" et %u autres", receivers.count-1]];
     }
     
     return label;
@@ -201,7 +229,7 @@
     NSString* dateText;
     
     if (diff < 60) {
-        dateText = @"Just now";
+        dateText = @"A l'instant";
     } else if (diff < 3600) {
         dateText = [NSString stringWithFormat:@"Il y a %d minutes", (int)(diff / 60)];
     } else if (diff < 86400) {
@@ -214,6 +242,10 @@
     }
     
     return dateText;
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
 }
 
 @end

@@ -34,15 +34,15 @@ static OutboxManager* sharedManager;
     return self;
 }
 
-- (void)addPendingPropositionWithImage:(UIImage *)image users:(NSArray *)userIds originalProposition:(Proposition *)original {
+- (void)addPendingPropositionWithImage:(UIImage *)image users:(NSArray *)userIds isPrivate:(BOOL)isPrivate originalProposition:(Proposition *)original {
     if (original == nil) {
         original = [[Proposition alloc] init];
     }
     
-    NSDictionary* data = @{ @"image": image, @"users": userIds, @"original": original };
+    NSDictionary* data = @{ @"image": image, @"users": userIds, @"isPrivate": [NSString stringWithFormat:@"%ud", (unsigned int)isPrivate], @"original": original };
     [self.pendingShipments addObject:data];
     
-    NSLog(@"PENDING SHIPMENT QUEUED");
+    // NSLog(@"PENDING SHIPMENT QUEUED");
     
     [self cacheCurrentState];
 }
@@ -52,13 +52,14 @@ static OutboxManager* sharedManager;
     
     UIImage* image = [data objectForKey:@"image"];
     NSArray* users = [data objectForKey:@"users"];
+    BOOL private = [(NSString*)[data objectForKey:@"isPrivate"] boolValue];
     Proposition* original = [data objectForKey:@"original"];
     
     if (original.id == nil) original = nil;
     
-    NSLog(@"%@", image);
+    // NSLog(@"%@", image);
     
-    [self.manager sendPropositionWithImage:image users:users originalProposition:original success:^{
+    [self.manager sendPropositionWithImage:image users:users isPrivate:private originalProposition:original success:^{
         if (self.delegate != nil) {
             [self.delegate outboxManager:self didSucceedSendingPropositionAtIndex:index];
         }
@@ -89,7 +90,7 @@ static OutboxManager* sharedManager;
         [state addObject:encodedShipment];
     }
     
-    NSLog(@"%@", filePath);
+    // NSLog(@"%@", filePath);
     
     [state writeToFile:filePath atomically:YES];
 }

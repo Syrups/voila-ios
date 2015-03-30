@@ -14,22 +14,37 @@
 #import "PropositionManager.h"
 #import "OutboxManager.h"
 #import "PKAIDecoder.h"
+#import "Configuration.h"
+#import "UIImageView+WebCache.h"
 
-@implementation FriendPickerViewController
+@implementation FriendPickerViewController {
+    BOOL private;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    private = NO;
     
     self.friends = @[];
     self.selectedFriends = [NSMutableArray array];
     
     UserManager* manager = [[UserManager alloc] init];
     
+    UIRefreshControl* refresh = [[UIRefreshControl alloc] init];
+    [refresh addTarget:self action:@selector(refreshList) forControlEvents:UIControlEventValueChanged];
+    [self.friendsTableView addSubview:refresh];
+    self.refreshControl = refresh;
+    
+    self.activityIndicator.hidden = NO;
+    
     [manager getFriendsOfUser:[[UserSession sharedSession] user] withSuccess:^(NSArray *friends) {
         self.friends = friends;
         [self.friendsTableView reloadData];
+        self.activityIndicator.hidden = YES;
     } failure:^{
-        
+        self.errorLabel.hidden = NO;
+        self.activityIndicator.hidden = YES;
     }];
     
     self.friendsTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.friendsTableView.bounds.size.width, 30)];
@@ -47,6 +62,20 @@
 
 }
 
+- (void)refreshList {
+    UserManager* manager = [[UserManager alloc] init];
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    [manager getFriendsOfUser:[[UserSession sharedSession] user] withSuccess:^(NSArray *friends) {
+        self.friends = friends;
+        [self.friendsTableView reloadData];
+        self.errorLabel.hidden = YES;
+        [self.refreshControl endRefreshing];
+    } failure:^{
+        self.errorLabel.hidden = NO;
+        [self.refreshControl endRefreshing];
+    }];
+}
+
 - (IBAction)toggleFriendSelection:(FriendSwitch*)sender {
     if ([self.selectedFriends containsObject:sender.friendId]) {
         [self.selectedFriends removeObject:sender.friendId];
@@ -62,7 +91,7 @@
         self.sendButton.alpha = 0.5f;
     }
     
-    NSLog(@"%@", self.selectedFriends);
+    // NSLog(@"%@", self.selectedFriends);
 }
 
 - (IBAction)send:(id)sender {
@@ -77,13 +106,13 @@
     
     [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
     
-    [manager sendPropositionWithImage:self.image users:self.selectedFriends originalProposition:self.originalProposition  success:^{
+    [manager sendPropositionWithImage:self.image users:self.selectedFriends isPrivate:private originalProposition:self.originalProposition  success:^{
         [sending removeFromSuperview];
         [self close];
     } failure:^{
         // ERROR
-        [[OutboxManager sharedManager] addPendingPropositionWithImage:self.image users:self.selectedFriends originalProposition:self.originalProposition];
-//        NSLog(@"%@", [[OutboxManager sharedManager] pendingShipments]);
+        [[OutboxManager sharedManager] addPendingPropositionWithImage:self.image users:self.selectedFriends isPrivate:private originalProposition:self.originalProposition];
+//        // NSLog(@"%@", [[OutboxManager sharedManager] pendingShipments]);
         [sending removeFromSuperview];
         [self close];
     }];
@@ -117,7 +146,7 @@
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"FriendCell"];
     User* friend = [self.friends objectAtIndex:indexPath.row];
     
-//    NSLog(@"%@", self.originalProposition.allReceivers);
+//    // NSLog(@"%@", self.originalProposition.allReceivers);
     
     // Check if this friend has already received this proposition
     // and if so, disable sending to him
@@ -144,6 +173,10 @@
     UIImageView* profilePic = (UIImageView*)[cell.contentView viewWithTag:10];
     profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
     
+    if (friend.avatar) {
+        [profilePic sd_setImageWithURL:[NSURL URLWithString:MediaUrl(friend.avatar)]];
+    }
+    
     UILabel* name = (UILabel*)[cell.contentView viewWithTag:20];
     name.text = friend.username;
     
@@ -155,16 +188,44 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [self.friendsTableView cellForRowAtIndexPath:indexPath];
+    
+    if ([cell.reuseIdentifier isEqualToString:@"FriendCellAlready"]) {
+        return;
+    }
+    
     FriendSwitch* btn = (FriendSwitch*)[cell.contentView viewWithTag:30];
     [btn sendActionsForControlEvents:UIControlEventTouchUpInside];
+}
+
+- (IBAction)toggleVisibility:(id)sender {
+    private = !private;
+    
+    if (private) {
+        self.privateButton.alpha = 1;
+        self.publicButton.alpha = 0.5f;
+        self.privateSelector.alpha = 1;
+        self.publicSelector.alpha = 0;
+    } else {
+        self.privateButton.alpha = 0.5f;
+        self.publicButton.alpha = 1;
+        self.privateSelector.alpha = 0;
+        self.publicSelector.alpha = 1;
+    }
 }
 
 #pragma mark - Navigation
 
 - (IBAction)dismiss:(id)sender {
-    [UIView animateWithDuration:0.3f animations:^{
-        self.view.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
-    }];
+    [self.parentViewController.navigationController popViewControllerAnimated:NO];
+//    [UIView animateWithDuration:0.3f animations:^{
+//        self.view.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
+//    } completion:^(BOOL finished) {
+//        
+//    }];
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
 }
 
 @end

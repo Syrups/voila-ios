@@ -21,6 +21,9 @@
     
     bullets = [NSMutableArray array];
     
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    
+    
     for (int i = 0 ; i <= 15 ; i++) {
         UIView* circle = [[UIView alloc] initWithFrame:CGRectMake(i*15, self.frame.size.height/2, 4, 4)];
         circle.layer.cornerRadius = 2;
@@ -28,12 +31,54 @@
         circle.alpha = 0;
         [self addSubview:circle];
         [bullets addObject:circle];
+        
+        [UIView animateWithDuration:0.2f delay:i*0.05f options:0 animations:^{
+            circle.alpha = 1;
+            if (i > 8) {
+                [circle setBackgroundColor:RgbColorAlpha(0, 215, 213, 1)];
+            }
+            if (i < 6) {
+                [circle setBackgroundColor:RgbColorAlpha(192, 15, 71, 1)];
+            }
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.1f delay:0.2f options:0 animations:^{
+                circle.alpha = 0;
+            } completion:nil];
+        }];
     }
     
-    SliderDiamond* handler = [[SliderDiamond alloc] initWithFrame:CGRectMake(self.frame.size.width/2-40, self.frame.size.height/2 - 40, 80, 80)];
+    
+    SliderDiamond* handler = [[SliderDiamond alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
     [self addSubview:handler];
     self.handler = handler;
     
+    if (true) {
+        [UIView animateWithDuration:0 animations:^{
+            self.overlay.alpha = 0;
+            self.helpLabel.hidden = YES;
+        }];
+    }
+    
+    [UIView animateWithDuration:0.3f delay:0.3f options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        
+        self.handler.transform = CGAffineTransformMakeScale(1.3f, 1.3f);
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.3f delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+            self.handler.transform = CGAffineTransformMakeScale(1, 1);
+//            CGRect f = self.handler.frame;
+//            f.origin.x -= 40;
+//            self.handler.frame = f;
+        } completion:^(BOOL finished) {
+            [UIView animateWithDuration:0.2f delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+//                CGRect f = self.handler.frame;
+//                f.origin.x += 20;
+//                self.handler.frame = f;
+                self.overlay.alpha = 0;
+                self.helpLabel.hidden = YES;
+            } completion:nil];
+        }];
+    }];
+        
     return self;
 }
 
@@ -116,7 +161,7 @@
             self.positiveUi.transform = CGAffineTransformMakeScale(1, 1);
             
             CGRect f = self.handler.frame;
-            f.origin.x = self.frame.size.width-50;
+            f.origin.x = f.size.width/2;
             self.handler.frame = f;
             self.positiveUi.alpha = 1;
         } completion:^(BOOL finished) {
@@ -136,7 +181,7 @@
             self.negativeUi.transform = CGAffineTransformMakeScale(1, 1);
             
             CGRect f = self.handler.frame;
-            f.origin.x = -20;
+            f.origin.x = -f.size.width/2+20;
             self.handler.frame = f;
             self.negativeUi.alpha = 1;
         } completion:^(BOOL finished) {
@@ -155,7 +200,7 @@
     else {
         [UIView animateWithDuration:0.3f animations:^{
             CGRect f = self.handler.frame;
-            f.origin.x = self.frame.size.width/2-40;
+            f.origin.x = 0;
             self.handler.frame = f;
         }];
         [self hide];

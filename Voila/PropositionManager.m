@@ -40,13 +40,13 @@
         }
         
         if (err) {
-            NSLog(@"%@", err);
+            // NSLog(@"%@", err);
         }
         
         success(propositions, answers);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
         
         if (failure) failure();
     }];
@@ -69,19 +69,19 @@
         NSArray* received = [Proposition arrayOfModelsFromDictionaries:responseObject error:&err];
         
         if (err) {
-            NSLog(@"%@", err);
+            // NSLog(@"%@", err);
         }
         
         success(received);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
     }];
     
     [op start];
 }
 
-- (void)sendPropositionWithImage:(UIImage *)image users:(NSArray *)userIds originalProposition:(Proposition*)original success:(void (^)())success failure:(void (^)())failure {
+- (void)sendPropositionWithImage:(UIImage *)image users:(NSArray *)userIds isPrivate:(BOOL)isPrivate originalProposition:(Proposition*)original success:(void (^)())success failure:(void (^)())failure {
     
     ImageUploader* uploader = [[ImageUploader alloc] init];
     
@@ -104,7 +104,7 @@
                 originalId = original.id;
             }
             
-            [request setHTTPBody:[self httpBodyForFilename:filename users:userIds original:originalId]];
+            [request setHTTPBody:[self httpBodyForFilename:filename users:userIds isPrivate:isPrivate original:originalId]];
             AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
             
             
@@ -114,7 +114,7 @@
                 
                 success();
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                NSLog(@"%@", error);
+                // NSLog(@"%@", error);
                 failure();
             }];
             
@@ -136,7 +136,7 @@
             originalId = original.id;
         }
         
-        [request setHTTPBody:[self httpBodyForFilename:original.image users:userIds original:originalId]];
+        [request setHTTPBody:[self httpBodyForFilename:original.image users:userIds isPrivate:isPrivate original:originalId]];
         AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
         
         
@@ -146,7 +146,7 @@
             
             success();
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"%@", error);
+            // NSLog(@"%@", error);
             failure();
         }];
         
@@ -164,7 +164,7 @@
         success();
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
         failure();
     }];
     
@@ -181,7 +181,7 @@
         success();
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
         failure();
     }];
     
@@ -202,13 +202,13 @@
         NSArray* received = [Proposition arrayOfModelsFromDictionaries:responseObject error:&err];
         
         if (err) {
-            NSLog(@"%@", err);
+            // NSLog(@"%@", err);
         }
         
         success(received);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
     }];
     
     [op start];
@@ -228,19 +228,19 @@
         NSArray* sent = [Proposition arrayOfModelsFromDictionaries:responseObject error:&err];
         
         if (err) {
-            NSLog(@"%@", err);
+            // NSLog(@"%@", err);
         }
         
         success(sent);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
     }];
     
     [op start];
 }
 
--(NSData*)httpBodyForFilename:(NSString*)filename users:(NSArray *)userIds original:(NSString*)original {
+-(NSData*)httpBodyForFilename:(NSString*)filename users:(NSArray *)userIds isPrivate:(BOOL)isPrivate original:(NSString*)original {
     NSMutableString *usersJson = [NSMutableString stringWithString:@"["];
     int i = 0;
     
@@ -257,7 +257,7 @@
     NSString* body;
     
     if (original == nil) {
-        body = [NSString stringWithFormat:@"{ \"image\": \"%@\", \"receivers\": %@ }", filename, usersJson];
+        body = [NSString stringWithFormat:@"{ \"image\": \"%@\", \"receivers\": %@, \"isPrivate\": %u }", filename, usersJson, (unsigned int)isPrivate];
     } else {
         body = [NSString stringWithFormat:@"{ \"image\": \"%@\", \"receivers\": %@, \"originalProposition\": \"%@\" }", filename, usersJson, original];
     }

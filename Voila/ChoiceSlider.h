@@ -22,6 +22,7 @@
 @property (strong, nonatomic) IBOutlet UIView* negativeUi;
 @property (strong, nonatomic) IBOutlet UIView* resendButton;
 @property (strong, nonatomic) IBOutlet UIView* nextButton;
+@property (strong, nonatomic) IBOutlet UIView* helpLabel;
 
 @property (strong, nonatomic) IBOutlet PendingPropositionViewController* viewController;
 

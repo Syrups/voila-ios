@@ -31,13 +31,14 @@
         NSArray* friends = [User arrayOfModelsFromDictionaries:responseObject error:&err];
         
         if (err) {
-            NSLog(@"%@", err);
+            // NSLog(@"%@", err);
         }
         
         success(friends);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
+        if (failure) failure();
     }];
     
     [op start];
@@ -54,13 +55,36 @@
         NSArray* users = [User arrayOfModelsFromDictionaries:responseObject error:&err];
         
         if (err) {
-            NSLog(@"%@", err);
+            // NSLog(@"%@", err);
         }
         
         success(users);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
+    }];
+    
+    [op start];
+}
+
+-(void)getSentFriendRequestsForUser:(User *)user withSuccess:(void (^)(NSArray *))success failure:(void (^)())failure {
+    AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:[Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@/requests/sent", user.id] authenticated:YES method:@"GET"]];
+    
+    op.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        NSError* err = nil;
+        NSArray* users = [User arrayOfModelsFromDictionaries:responseObject error:&err];
+        
+        if (err) {
+            // NSLog(@"%@", err);
+        }
+        
+        success(users);
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // NSLog(@"%@", error);
     }];
     
     [op start];
@@ -77,13 +101,13 @@
         NSArray* results = [User arrayOfModelsFromDictionaries:responseObject error:&err];
         
         if (err) {
-            NSLog(@"%@", err);
+            // NSLog(@"%@", err);
         }
         
         success(results);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
         if (failure) {
             failure();
         }
@@ -131,7 +155,7 @@
         success();
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
         failure();
     }];
     
@@ -150,7 +174,7 @@
         success();
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
         failure();
     }];
     
@@ -168,13 +192,13 @@
         User* user = [[User alloc] initWithDictionary:responseObject error:&err];
         
         if (err) {
-            NSLog(@"%@", err);
+            // NSLog(@"%@", err);
         }
         
         success(user);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
     }];
     
     [op start];
@@ -184,6 +208,9 @@
     ImageUploader* uploader = [[ImageUploader alloc] init];
     
     [uploader uploadImage:image withSuccess:^(NSString *filename) {
+        
+        // NSLog(@"%@", filename);
+        
         NSMutableURLRequest* request = [Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@", user.id] authenticated:YES method:@"PUT"].mutableCopy;
         [request setHTTPBody:[[NSString stringWithFormat:@"{ \"avatar\": \"%@\" }", filename] dataUsingEncoding:NSUTF8StringEncoding]];
         AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
@@ -197,7 +224,7 @@
             success([NSURL URLWithString:MediaUrl(filename)]);
             
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"%@", error);
+            // NSLog(@"%@", error);
             failure();
         }];
         
@@ -209,9 +236,47 @@
     }];
 }
 
+- (void)deleteAccountOfUser:(User *)user success:(void (^)())success failure:(void (^)())failure {
+    NSMutableURLRequest* request = [Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@", user.id] authenticated:YES method:@"DELETE"].mutableCopy;
+    AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    op.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [[NSURLCache sharedURLCache] removeAllCachedResponses]; // remove all cache
+        success();
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // NSLog(@"%@", error);
+        failure();
+    }];
+    
+    [op start];
+}
+
+- (void)sendPasswordResetRequestForUser:(User *)user success:(void (^)())success failure:(void (^)())failure {
+    NSMutableURLRequest* request = [Api getBaseRequestFor:[NSString stringWithFormat:@"/users/%@/requestreset", user.id] authenticated:YES method:@"POST"].mutableCopy;
+    AFHTTPRequestOperation* op = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    
+    op.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        [[NSURLCache sharedURLCache] removeAllCachedResponses]; // remove all cache
+        success();
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        // NSLog(@"%@", error);
+        failure();
+    }];
+    
+    [op start];
+}
+
 - (NSData*)httpBodyForUsername:(NSString*)username password:(NSString*)password email:(NSString*)email {
     
-    NSString* deviceToken = [(AppDelegate*)[[UIApplication sharedApplication] delegate] deviceToken];
+    NSString* deviceToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"device_token"];
     
     if (deviceToken == nil) {
         deviceToken = @"";

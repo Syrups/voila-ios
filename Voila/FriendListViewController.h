@@ -13,6 +13,7 @@
 
 @property (strong, nonatomic) MenuViewController* menu;
 @property (strong, nonatomic) NSMutableArray* friends;
+@property (strong, nonatomic) NSMutableArray* sentRequests;
 @property (strong, nonatomic) NSMutableArray* filteredFriends;
 @property (strong, nonatomic) IBOutlet UITableView* friendsTableView;
 @property (strong, nonatomic) IBOutlet UIView* requestsLed;

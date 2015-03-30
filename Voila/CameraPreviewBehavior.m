@@ -35,7 +35,7 @@
     AVCaptureDevice *inputDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceInput *captureInput = [AVCaptureDeviceInput deviceInputWithDevice:inputDevice error:nil];
     if (!captureInput) {
-        NSLog(@"No capture input available.");
+        // NSLog(@"No capture input available.");
         
         //        [self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"test_camera_bg"]]];
         return;
@@ -103,7 +103,7 @@
         }
     }
     
-    NSLog(@"about to request a capture from: %@", self.stillImageOutput);
+    // NSLog(@"about to request a capture from: %@", self.stillImageOutput);
     [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
         
 //        NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
@@ -116,7 +116,7 @@
 - (IBAction)switchCameraDevice:(id)sender {
     AVCaptureDevice *device;
     device = isFrontCamera ? self.backCamera : self.frontCamera;
-    NSLog(@"Switching camera.");
+    // NSLog(@"Switching camera.");
     AVCaptureDeviceInput *input = [[AVCaptureDeviceInput alloc] initWithDevice:device error:nil];
     
     [self.captureSession removeInput:self.captureSession.inputs.firstObject];

@@ -35,15 +35,54 @@
     
     [self createMenu];
     [self setup];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateView) name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    [self updateView];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [self.captureSession stopRunning];
+}
+
+- (void)updateView {
     if (![[UserSession sharedSession] hasPendingFriendRequests]) {
         self.friendRequestsLed.hidden = YES;
     }
     
+    
+    if ([Cache hasCachedPropositions]) {
+        // NSLog(@"Preloaded propositions were found.");
+        pendingPropositions = [Cache cachedPropositions];
+        self.notificationsLed.hidden = NO;
+    }
+    
+    [self fetchPendingPropositions];
+    [self fetchPendingFriendRequests];
+    
+    
+    [Cache preloadUserData:[[UserSession sharedSession] user] withSuccess:^{
+        
+    }];
+    
+    if ([OutboxManager sharedManager].pendingShipments.count > 0) {
+        self.outboxLed.hidden = NO;
+    } else {
+        self.outboxLed.hidden = YES;
+    }
+    
+    [self.captureSession startRunning];
+    
+    if (pendingPropositions.count + pendingAnswers.count == 0) {
+        self.notificationsLed.hidden = YES;
+    }
+}
+
+- (void)fetchPendingPropositions {
     PropositionManager* manager = [[PropositionManager alloc] init];
     
     [manager findPendingPropositionsAndAnswersWithSuccess:^(NSArray* propositions, NSArray* answers){
@@ -65,7 +104,9 @@
     } failure:^{
         ErrorAlert(@"Pas de connexion Internet");
     }];
-    
+}
+
+- (void)fetchPendingFriendRequests {
     UserManager* userManager = [[UserManager alloc] init];
     
     [userManager getFriendRequestsForUser:[[UserSession sharedSession] user] withSuccess:^(NSArray *requests) {
@@ -76,28 +117,25 @@
     } failure:^{
         // error
     }];
-    
-    [Cache preloadUserData:[[UserSession sharedSession] user] withSuccess:^{
-        
-    }];
-    
-    if ([OutboxManager sharedManager].pendingShipments.count > 0) {
-        self.outboxLed.hidden = NO;
-    } else {
-        self.outboxLed.hidden = YES;
-    }
-    
-    [self.captureSession startRunning];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [self.captureSession stopRunning];
 }
 
 - (void) presentCapturedImage:(UIImage*)image {
+    
+//    UIImageView* view=  [[UIImageView alloc] initWithFrame:self.view.frame];
+//    view.image = image;
+//    [self.view addSubview:view];
+//    [self.view bringSubviewToFront:view];
+
+    
     CapturedImageViewController* vc = (CapturedImageViewController*)[self.storyboard instantiateViewControllerWithIdentifier:@"CapturedImage"];
-    vc.image = [self scaleImage:image toSize:CGSizeMake(image.size.width/2, image.size.height/2)];
+    [vc setImage:[self scaleImage:image toSize:CGSizeMake(image.size.width/2, image.size.height/2)]];
+//    
+//    [Cache setTakenImage:vc.image];
+    
+    
+
     [self.navigationController pushViewController:vc animated:NO];
+    [vc viewDidLoad];
 }
 
 #pragma mark - Image picking
@@ -137,7 +175,11 @@
 
 - (IBAction)closeMenu:(id)sender {
     if (self.menu.view.frame.origin.x == -self.view.frame.size.width) {
-        [self performSegueWithIdentifier:@"ToHistorySegue" sender:sender];
+        if (pendingPropositions.count + pendingAnswers.count == 0) {
+            [self performSegueWithIdentifier:@"ToHistorySegue" sender:sender];
+        } else {
+            [self performSegueWithIdentifier:@"ToNotificationsSegue" sender:sender];
+        }
     } else {
         [UIView animateWithDuration:0.3f delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             CGRect f = self.menu.view.frame;
@@ -212,7 +254,7 @@
     AVCaptureDevice *inputDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceInput *captureInput = [AVCaptureDeviceInput deviceInputWithDevice:inputDevice error:nil];
     if (!captureInput) {
-        NSLog(@"No capture input available.");
+        // NSLog(@"No capture input available.");
         
         return;
     }
@@ -283,7 +325,7 @@
         }
     }
     
-    NSLog(@"about to request a capture from: %@", self.stillImageOutput);
+    // NSLog(@"about to request a capture from: %@", self.stillImageOutput);
     [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:videoConnection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error){
         
         NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
@@ -302,7 +344,7 @@
 - (IBAction)switchCameraDevice:(id)sender {
     AVCaptureDevice *device;
     device = isFrontCamera ? self.backCamera : self.frontCamera;
-    NSLog(@"Switching camera.");
+    // NSLog(@"Switching camera.");
     AVCaptureDeviceInput *input = [[AVCaptureDeviceInput alloc] initWithDevice:device error:nil];
     
     [self.captureSession removeInput:self.captureSession.inputs.firstObject];

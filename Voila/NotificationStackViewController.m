@@ -24,12 +24,13 @@
 
 - (void)next {
     
-    NSLog(@"Next");
+    // NSLog(@"Next");
     
     self.notifCountLabel.text = [NSString stringWithFormat:@"%lu", self.propositionStack.count + self.answersStack.count - currentIndex];
     
     // If there's no more notifications to show, go back
     if (currentIndex == self.propositionStack.count + self.answersStack.count) {
+        self.mainViewController.notificationsLed.hidden = YES;
         [self.navigationController popToRootViewControllerAnimated:YES];
         return;
     }
@@ -75,8 +76,13 @@
 }
 
 - (void)showTopControls {
-    self.notifCountLabel.hidden = NO;
+//    self.notifCountLabel.hidden = NO;
     self.backButton.hidden = NO;
 }
+
+-(UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleLightContent;
+}
+
 
 @end

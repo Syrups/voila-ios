@@ -17,7 +17,7 @@
 @property (strong, nonatomic) NSMutableArray* pendingShipments;
 
 + (OutboxManager*)sharedManager;
-- (void)addPendingPropositionWithImage:(UIImage*)image users:(NSArray*)userIds originalProposition:(Proposition*)original;
+- (void)addPendingPropositionWithImage:(UIImage*)image users:(NSArray*)userIds isPrivate:(BOOL)isPrivate originalProposition:(Proposition*)original;
 - (void)attemptSendAll;
 - (void)attemptSendPropositionAtIndex:(NSUInteger)index;
 

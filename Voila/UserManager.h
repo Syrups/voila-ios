@@ -16,12 +16,14 @@
 - (void)getFriendsOfUser:(User*)user withSuccess:(void(^)(NSArray* friends))success failure:(void(^)())failure;
 - (void)findUsersMatchingQuery:(NSString*)query withSuccess:(void(^)(NSArray* results))success failure:(void(^)())failure;
 - (void)getFriendRequestsForUser:(User*)user withSuccess:(void(^)(NSArray* requests))success failure:(void(^)())failure;
+- (void)getSentFriendRequestsForUser:(User*)user withSuccess:(void(^)(NSArray* requests))success failure:(void(^)())failure;
+
 - (void)addFriendForUser:(User*)user withId:(NSString*)friendId withSuccess:(void(^)())success failure:(void(^)())failure;
 - (void)dismissFriendRequestForUser:(User*)user withId:(NSString*)friendId withSuccess:(void(^)())success failure:(void(^)())failure;
 - (void)unfriendForUser:(User*)user withId:(NSString*)friendId withSuccess:(void(^)())success failure:(void(^)())failure;
 - (void)getUser:(User*)user withSuccess:(void(^)(User* user))success failure:(void(^)())failure;
 - (void)updateAvaterOfUser:(User*)user withImage:(UIImage*)image success:(void(^)(NSURL*))success failure:(void(^)())failure;
-
-
+- (void)deleteAccountOfUser:(User*)user success:(void(^)())success failure:(void(^)())failure;
+- (void)sendPasswordResetRequestForUser:(User*)user success:(void(^)())success failure:(void(^)())failure;
 
 @end

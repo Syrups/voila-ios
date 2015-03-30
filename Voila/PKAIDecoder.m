@@ -126,7 +126,7 @@
     NSArray *images = [PKAIDecoder decodeImageFromFile:file];
     
     if (images.count == 0) {
-        NSLog(@"PKAIDecoder : wrong filename (no .pkai file found with such name : %@)", file);
+        // NSLog(@"PKAIDecoder : wrong filename (no .pkai file found with such name : %@)", file);
         return;
     }
     

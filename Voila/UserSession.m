@@ -66,7 +66,7 @@ static UserSession* sharedSession;
         
         success(self);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"%@", error);
+        // NSLog(@"%@", error);
         failure();
     }];
     

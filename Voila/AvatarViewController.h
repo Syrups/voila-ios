@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-@interface AvatarViewController : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate>
+@interface AvatarViewController : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property(strong, nonatomic) AVCaptureSession *captureSession;
 @property(strong, nonatomic) AVCaptureVideoPreviewLayer *captureVideoPreviewLayer;
@@ -22,5 +22,6 @@
 @property (strong, nonatomic) IBOutlet UIView* previewView;
 @property (strong, nonatomic) IBOutlet UIButton* captureButton;
 @property (strong, nonatomic) IBOutlet UIButton* validateButton;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView* activityIndicator;
 
 @end

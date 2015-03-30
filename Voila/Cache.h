@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "User.h"
+#import <UIKit/UIKit.h>
 
 @interface Cache : NSObject
 
@@ -15,5 +16,11 @@
 + (User*)cachedUser;
 + (void)preloadUserFriends:(User*)user withSuccess:(void(^)())success;
 + (NSArray *)cachedFriends;
++ (void)preloadReceivedPropositionsWithSuccess:(void(^)())success;
++ (void)cachePropositions:(NSArray*)propositions;
++ (NSArray*)cachedPropositions;
++ (BOOL)hasCachedPropositions;
++ (void)setTakenImage:(UIImage*)image;
++ (UIImage*)takenImage;
 
 @end

@@ -11,6 +11,7 @@
 #import "UserManager.h"
 #import "UserSession.h"
 #import "UIImageView+WebCache.h"
+#import "Configuration.h"
 
 @interface AwaitingFriendsViewController ()
 
@@ -40,6 +41,12 @@
     CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:self.requestsTableView];
     NSIndexPath *indexPath = [self.requestsTableView indexPathForRowAtPoint:buttonPosition];
     
+    UITableViewCell* cell = [self.requestsTableView cellForRowAtIndexPath:indexPath];
+    UIButton* btn = (UIButton*)[cell.contentView viewWithTag:30];
+    btn.hidden = YES;
+    UIActivityIndicatorView* indicator = (UIActivityIndicatorView*)[cell.contentView viewWithTag:40];
+    indicator.hidden = NO;
+    
     UserManager* manager = [[UserManager alloc] init];
     User* user = [[UserSession sharedSession] user];
     User* userToAdd = [self.requests objectAtIndex:indexPath.row];
@@ -53,7 +60,9 @@
             [[UserSession sharedSession] setHasPendingFriendRequests:NO];
         }
     } failure:^{
-        // ERROR
+        btn.hidden = NO;
+        indicator.hidden = YES;
+        ErrorAlert(@"Oups, une erreur est survenue. Réessayez plus tard.")
     }];
 }
 
@@ -82,6 +91,10 @@
     
     UIImageView* profilePic = (UIImageView*)[cell.contentView viewWithTag:10];
     profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
+    
+    if (user.avatar) {
+        [profilePic sd_setImageWithURL:[NSURL URLWithString:MediaUrl(user.avatar)]];
+    }
     
     UILabel* name = (UILabel*)[cell.contentView viewWithTag:20];
     name.text = user.username;

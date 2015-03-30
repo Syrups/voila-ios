@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Proposition.h"
 
-@interface PendingPropositionViewController : UIViewController
+@interface PendingPropositionViewController : UIViewController <UIAlertViewDelegate>
 
 @property (strong, nonatomic) Proposition* proposition;
 
@@ -18,6 +18,7 @@
 @property (strong, nonatomic) IBOutlet UIImageView* senderAvatar;
 @property (strong, nonatomic) IBOutlet UIImageView* image;
 @property (strong, nonatomic) IBOutlet UIButton* okButton;
+@property (strong, nonatomic) IBOutlet UIButton* reproposeButton;
 
 - (void)didAnswerYesToCurrentProposition;
 - (void)didAnswerNoToCurrentProposition;

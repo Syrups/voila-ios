@@ -10,6 +10,7 @@
 #import "UserManager.h"
 #import "UserSession.h"
 #import "UIImageView+WebCache.h"
+#import "Configuration.h"
 
 @interface FriendListViewController ()
 
@@ -29,7 +30,15 @@
         self.friends = friends;
         [self.friendsTableView reloadData];
     } failure:^{
-        NSLog(@"ERROR: Unable to fetch friend");
+        // NSLog(@"ERROR: Unable to fetch friend");
+    }];
+    
+    [manager getSentFriendRequestsForUser:user withSuccess:^(NSArray *requests) {
+        self.sentRequests = requests;
+        // NSLog(@"%ld", self.sentRequests.count);
+        [self.friendsTableView reloadData];
+    } failure:^{
+        // NSLog(@"ERROR: Unable to fetch sent friend requests");
     }];
     
     if ([[UserSession sharedSession] hasPendingFriendRequests]) {
@@ -57,13 +66,46 @@
 
 #pragma mark - UITableView
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 2;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (section == 1) {
+        return self.sentRequests.count;
+    }
+    
     return self.friends.count;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if (section == 1 && self.sentRequests.count > 0) {
+        return @"Demandes en attente";
+    }
+    
+    return @"";
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    if (section == 1 && self.sentRequests.count > 0) {
+        return 30;
+    }
+    
+    return 0;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:@"FriendCell"];
-    User* friend = [self.friends objectAtIndex:indexPath.row];
+    
+    User* friend = nil;
+    
+    if (indexPath.row <= self.friends.count) {
+        friend = [self.friends objectAtIndex:indexPath.row];
+    } else {
+        friend = [self.sentRequests objectAtIndex:indexPath.row-self.friends.count];
+    }
+    
     
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FriendCell"];
@@ -71,6 +113,10 @@
     
     UIImageView* profilePic = (UIImageView*)[cell.contentView viewWithTag:10];
     profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
+    
+    if (friend.avatar) {
+        [profilePic sd_setImageWithURL:[NSURL URLWithString:MediaUrl(friend.avatar)]];
+    }
     
     UILabel* name = (UILabel*)[cell.contentView viewWithTag:20];
     name.text = friend.username;
@@ -83,6 +129,11 @@
     // Return YES if you want the specified item to be editable.
     return YES;
 }
+
+-(NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return @"Retirer des amis";
+}
+
 
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {

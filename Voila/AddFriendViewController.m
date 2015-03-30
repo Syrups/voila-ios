@@ -10,6 +10,7 @@
 #import "User.h"
 #import "UserSession.h"
 #import "UIImageView+WebCache.h"
+#import "Configuration.h"
 
 @interface AddFriendViewController ()
 
@@ -21,6 +22,8 @@
     [super viewDidLoad];
     
     self.userManager = [[UserManager alloc] init];
+    
+    self.searchField.leftView  = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"field-username"]];
     
     [self.profileImageBackground sd_setImageWithURL:[[UserSession sharedSession] avatarUrl]];
 }
@@ -54,6 +57,12 @@
     CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:self.resultsTableView];
     NSIndexPath *indexPath = [self.resultsTableView indexPathForRowAtPoint:buttonPosition];
     
+    UITableViewCell* cell = [self.resultsTableView cellForRowAtIndexPath:indexPath];
+    UIButton* btn = (UIButton*)[cell.contentView viewWithTag:30];
+    btn.hidden = YES;
+    UIActivityIndicatorView* indicator = (UIActivityIndicatorView*)[cell.contentView viewWithTag:40];
+    indicator.hidden = NO;
+    
     UserManager* manager = [[UserManager alloc] init];
     User* user = [[UserSession sharedSession] user];
     User* userToAdd = [self.results objectAtIndex:indexPath.row];
@@ -61,7 +70,10 @@
     [manager addFriendForUser:user withId:userToAdd.id withSuccess:^{
         [self dismissViewControllerAnimated:YES completion:nil];
     } failure:^{
-        // ERROR
+        ErrorAlert(@"La demande d'ami n'a pu être envoyé, réessayez plus tard");
+        btn.hidden = YES;
+        UIActivityIndicatorView* indicator = (UIActivityIndicatorView*)[cell.contentView viewWithTag:40];
+        indicator.hidden = NO;
     }];
 }
 
@@ -93,6 +105,10 @@
     
     UIImageView* profilePic = (UIImageView*)[cell.contentView viewWithTag:10];
     profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
+    
+    if (result.avatar) {
+        [profilePic sd_setImageWithURL:[NSURL URLWithString:MediaUrl(result.avatar)]];
+    }
     
     UILabel* name = (UILabel*)[cell.contentView viewWithTag:20];
     name.text = result.username;

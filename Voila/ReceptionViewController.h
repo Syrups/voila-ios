@@ -14,5 +14,6 @@
 @property (strong, nonatomic) MenuViewController* menu;
 @property (strong, nonatomic) IBOutlet UICollectionView* collectionView;
 @property (strong, nonatomic) NSArray* received;
+@property (strong, nonatomic) IBOutlet UILabel* startLabel;
 
 @end

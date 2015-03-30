@@ -29,12 +29,15 @@
         self.received = received;
         NSMutableArray* urls = [NSMutableArray array];
         
+        if (self.received.count == 0) {
+            self.startLabel.hidden = NO;
+        }
+        
         for (Proposition* prop in self.received) {
-            NSLog(@"%@", MediaUrl(prop.image));
+            // NSLog(@"%@", MediaUrl(prop.image));
             [urls addObject:[NSURL URLWithString:MediaUrl(prop.image)]];
         }
         
-        [[SDWebImagePrefetcher sharedImagePrefetcher] prefetchURLs:urls];
         
         [self.collectionView reloadData];
     } failure:^{
@@ -57,7 +60,7 @@
     }
     
     UIImageView* image = (UIImageView*)[cell.contentView viewWithTag:10];
-    [image sd_setImageWithURL:[NSURL URLWithString:MediaUrl(proposition.image)]];
+    [image sd_setImageWithURL:[NSURL URLWithString:MediaUrl(proposition.image)] placeholderImage:[UIImage imageNamed:@"johndoe"]];
     
     return cell;
 }
@@ -86,6 +89,8 @@
     Proposition* proposition = [self.received objectAtIndex:indexPath.row];
     UIView* full = [[UIView alloc] initWithFrame:self.view.frame];
     UIImageView* image = [[UIImageView alloc] initWithFrame:full.frame];
+
+    image.contentMode = UIViewContentModeScaleAspectFill;
     [image sd_setImageWithURL:[NSURL URLWithString:MediaUrl(proposition.image)]];
     
     [full addSubview:image];

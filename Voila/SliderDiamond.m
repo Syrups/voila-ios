@@ -14,8 +14,9 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     
-    UIImageView* image = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+    UIImageView* image = [[UIImageView alloc] initWithFrame:CGRectMake(frame.size.width/2-40, frame.size.height/2-40, 80, 80)];
     image.image = [UIImage imageNamed:@"choice-slider-handle"];
+    image.contentMode = UIViewContentModeScaleAspectFit;
     [self addSubview:image];
     
     return self;

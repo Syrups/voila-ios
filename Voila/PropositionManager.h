@@ -19,7 +19,7 @@
 - (void)getSentPropositionsOfUser:(User*)user success:(void(^)(NSArray* sent))success failure:(void(^)())failure;
 - (void)getPopularPropositionsOfUser:(User*)user success:(void(^)(NSArray* popular))success failure:(void(^)())failure;
 
-- (void) sendPropositionWithImage:(UIImage*)image users:(NSArray*)userIds originalProposition:(Proposition*)original success:(void(^)())success failure:(void(^)())failure;
+- (void) sendPropositionWithImage:(UIImage*)image users:(NSArray*)userIds isPrivate:(BOOL)isPrivate originalProposition:(Proposition*)original success:(void(^)())success failure:(void(^)())failure;
 
 - (void)takeProposition:(Proposition*)proposition withSuccess:(void(^)())success failure:(void(^)())failure;
 - (void)dismissProposition:(Proposition*)proposition withSuccess:(void(^)())success failure:(void(^)())failure;
